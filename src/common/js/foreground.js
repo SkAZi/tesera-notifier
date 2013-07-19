@@ -27,25 +27,29 @@ KangoAPI.onReady(function() {
         'log': function(){
             $('#log-tab').html(
                 nunjucks.env.render('log.html', { object_list: Models.Events.list() })
-            );            
+            );
+            return false;        
         },
 
         'messages': function(){
             $('#messages-tab').html(
                 nunjucks.env.render('messages.html', { object_list: Models.Messages.list() })
             );
+            return false;
         },
 
         'comments': function(){
             $('#comments-tab').html(
                 nunjucks.env.render('comments.html', { object_list: Models.Comments.list() })
             );
+            return false;
         },
 
         'subscriptions': function(){
             $('#subscriptions-tab').html(
                 nunjucks.env.render('subscriptions.html', { object_list: Models.Subscriptions.list() })
             );
+            return false;
         },
 
         'subscribe': function(){
@@ -63,6 +67,7 @@ KangoAPI.onReady(function() {
                     'last_comment': 0 // TODO: Вычислить
                 });
             });
+            return false;
         },
 
         'remove': function(){
@@ -92,7 +97,6 @@ KangoAPI.onReady(function() {
                 },
                 'contentType': 'text'
             }, Views.check_auth);
-
             return false;
         },
 
@@ -113,6 +117,7 @@ KangoAPI.onReady(function() {
                 }
             }
             xmlhttp.send(null);
+            return false;
         }
     }
 

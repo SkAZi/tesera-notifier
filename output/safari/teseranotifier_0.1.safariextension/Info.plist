@@ -19,7 +19,7 @@
 	<key>Chrome</key>
 	<dict>
 		<key>Database Quota</key>
-		<real>52428800</real>
+		<real>10485760</real>
 		<key>Global Page</key>
 		<string>background.html</string>
 		<key>Popovers</key>
@@ -66,7 +66,8 @@
 		</dict>
 		<key>Whitelist</key>
 		<array>
-			<string>http://tesera.ru/*</string>
+			<string>http://*/*</string>
+			<string>https://*/*</string>
 		</array>
 	</dict>
 	<key>Description</key>

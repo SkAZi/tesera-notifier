@@ -96,10 +96,6 @@ var Utils = {
         },
 
         'subscription': function(obj, text, xml){
-
-        },
-
-        'subscription': function(obj, text, xml){
             obj.update_counter = 1;
             obj.last_update = new Date();
             // TODO time inc
@@ -114,7 +110,7 @@ var Utils = {
             this._pool = [];
         }
 
-        // TODO: добавлять и считать просроченные половинным делением
+        // TODO: можно добавлять и считать просроченные половинным делением
         Pool.prototype = {
             'addJob': function(job){
                 for(var i=this._pool.length;i--;){
