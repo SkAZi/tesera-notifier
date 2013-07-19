@@ -1,0 +1,65 @@
+Задачи:
+
+- Проверка сообщений (message)
+- Проверка дневников (diary)
+- Проверка новостей (news)
+- Проверка игр (game)
+- Проврка комментариев (comment)
+
+
+
+Хранилище
+
+storage.getItems("log:*")
+storage.removeItems("log:{{day}}:*")
+
+--
+
+storage.setItem("log:{{day}}:{{type_id}}:{{target_id}}", {
+    "id": (int),
+    "day": (date),
+    "type": (str) <message|comment|news|diary|game>,
+    "count": (int),
+    "target": (str),
+    "target_type": (str)
+})
+
+storage.setItem("message:{{id}}", {
+    "id": (int),
+    "date": (date),
+    "unread": (bool),
+    "from": {
+        "id": (int),
+        "name": (str)
+    },
+    "title": (str),
+    "body": (str)
+})
+
+storage.setItem("comment:{{day}}:{{target_id}}:{{id}}", {
+    "id": (int),
+    "day": (date),
+    "target": {
+        "id": (int),
+        "type": (str),
+        "title": (str)
+    }(str),
+    "from": {
+        "id": (int),
+        "name": (str)
+    },
+    "title": (str),
+    "body": (str)
+})
+
+storage.setItem("subscription:{{type}}:{{id}}", {
+    "id": (int),
+    "sbtype": (int),
+    "url": (str),
+    "active": (bool),
+    "title": (str),
+    "type": (str),
+    "last_update": (date),
+    "planned_update": (date),
+    "update_counter": (int)
+})

@@ -1,0 +1,20 @@
+{
+  "kango_version": "1.2.4 744e69cf4136", 
+  "content_scripts": [
+    "js/inject.js"
+  ], 
+  "description": "Tesera Notifier extension by nastolkus and SkAZi", 
+  "name": "Tesera Notifier", 
+  "creator": "nastolkus, SkAZi", 
+  "background_scripts": [
+    "main.js"
+  ], 
+  "homepage_url": "http://nastolkus.com/naster/", 
+  "version": "0.1", 
+  "id": "kpffcgipmkpapkijdjpidjgombeheglb", 
+  "browser_button": {
+    "caption": "Tesera Notifier", 
+    "tooltipText": "Tesera Notifier", 
+    "icon": "icons/button.png"
+  }
+}
