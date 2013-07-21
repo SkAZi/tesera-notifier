@@ -24,6 +24,10 @@ new (function(routes){
 
     'changeSubscription': function(data){
         Background.subscribe(data);
+    },
+
+    'log': function(data){
+        Utils.log(data.msg, data.type);
     }
 
 });

@@ -13,7 +13,9 @@
   }, 
 
   "background_scripts": [
-    "main.js"
+    "js/utils.js",
+    "js/models.js",
+    "js/background.js"
   ], 
 
   "content_scripts": [

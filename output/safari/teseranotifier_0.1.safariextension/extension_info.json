@@ -8,7 +8,9 @@
   "creator": "nastolkus, SkAZi", 
   "developer_id": "YOUR_SAFARI_DEVELOPER_ID", 
   "background_scripts": [
-    "main.js"
+    "js/utils.js", 
+    "js/models.js", 
+    "js/background.js"
   ], 
   "homepage_url": "http://nastolkus.com/naster/", 
   "version": "0.1", 

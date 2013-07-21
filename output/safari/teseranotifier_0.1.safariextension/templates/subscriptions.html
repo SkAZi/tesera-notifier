@@ -24,4 +24,8 @@
         {% set last_active = object.active %}
         {% set last_type = object.type %}
     {% endfor %}
+
+    {% if object_list|length > 0 %}
+    <li class="empty"><a href="#" class="local">Импортировать подписки</a></li>
+    {% endif %}
 </ul>

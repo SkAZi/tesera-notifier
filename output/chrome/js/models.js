@@ -33,11 +33,23 @@ var Models = {
 
     Common: {
         'get_last': function(type){
-            return kango.storage.getItem('last:'+type) || 0;
+            return kango.storage.getItem('last:'+type) || {
+                'id': 0,
+                'date': new Date(0)
+            };
         },
 
-        'set_last': function(type, id){
-            kango.storage.setItem('last:'+type, id); 
+        'set_last': function(type, id, date){
+            kango.storage.setItem('last:'+type, {
+                'id': id,
+                'date': date || new Date()
+            }); 
+        },
+
+        'update_last': function(type, obj){
+            if(obj.id > this.get_last(type).id){
+                this.set_last(type, obj.id, obj.date);
+            }
         }
     },
 
@@ -78,10 +90,6 @@ var Models = {
     },
 
     Messages: {
-        'get_last': function(){
-            return kango.storage.getItem('last:message') || 0;
-        },
-
         'get_uid': function(params){
             return "message:"+params.id;
         },
@@ -109,9 +117,6 @@ var Models = {
 
         'save': function(obj){
             kango.storage.setItem(obj.uid, obj);
-            if(obj.id > this.get_last()){
-                kango.storage.setItem('last:message', obj.id);
-            }
             return obj;
         }
     },
@@ -193,10 +198,7 @@ var Models = {
                 "active": true,
                 "title": Utils.Tesera.parse_title(data.title),
                 "type": params.type,
-                "last_update": new Date(),
-                "planned_update": new Date(),
-                "last_post": data.last_post || 0,
-                "update_counter": 1
+                "last_post": data.last_post || 0
             };
 
             return this.save(obj);
@@ -219,8 +221,10 @@ var Models = {
 
     Settings: {
         base: {
-            "interval": 15*1000,
-            "turbo": false
+            //"interval": 60*1000,
+            //"default_period": 10*60*1000,
+            //"check_messages": 10*60*1000,
+            "debug": true
         },
 
         set: function(key, val){

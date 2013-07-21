@@ -1,8 +1,11 @@
 KangoAPI.onReady(function() {
+    window.DEBUG = Models.Settings.get("debug");
 
     /* Views */
     var Views = {
         'switch_tab': function(){
+            Utils.log("Switch tab fired.");
+
             $('#tabs li a').removeClass('active');
             $('#tabs-content > div').removeClass('active');
             $($(this).addClass('active').attr('href')).addClass('active');
@@ -60,7 +63,7 @@ KangoAPI.onReady(function() {
 
             // TODO: вместо этого сразу же разобрать страницу
             kango.browser.tabs.getCurrent(function(tab){
-                kango.dispatchMessage('changeSubscription', {
+                kango.invokeAsync('Background.subscribe', {
                     'url': tab.getUrl(),
                     'title': tab.getTitle(),
                     'sbtype': parseInt($this.attr('data-sbtype')),
@@ -81,7 +84,7 @@ KangoAPI.onReady(function() {
         },
 
         'open': function(){
-            kango.dispatchMessage('openURL', {'url': $(this).attr('href')});
+            kango.invokeAsync('Background.openURL', $(this).attr('href'));
             return false;
         },
 
@@ -132,21 +135,6 @@ KangoAPI.onReady(function() {
 
 
     /* Events */
-    kango.addMessageListener('popupSyncState', function(event){
-        if(event.data.State){
-            Models.State = event.data.State;
-
-            if(!Models.State.authorized || 
-                new Date() - Models.State.authorized > 15*60*1000){
-                Views.check_auth();
-            } else {
-                $('#preload-pane').hide();
-                $('#login-pane').hide();
-            }
-        } else {
-            kango.dispatchMessage('syncState', {});
-        }
-    });
 
 
     /* Utils */
@@ -178,6 +166,20 @@ KangoAPI.onReady(function() {
         }
     });
 
-    kango.dispatchMessage('syncState', {});
+    kango.invokeAsync('Background.syncState', null, function(data){
+        if(data){
+            Models.State = data;
+
+            if(!Models.State.authorized || 
+                new Date() - Models.State.authorized > 15*60*1000){
+                Views.check_auth();
+            } else {
+                $('#preload-pane').hide();
+                $('#login-pane').hide();
+            }
+        } else {
+            kango.invokeAsync('Background.syncState', Models.State);
+        }
+    });
     $('#tabs li:first-of-type a').click();
 });

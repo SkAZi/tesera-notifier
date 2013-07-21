@@ -8,7 +8,9 @@
   "creator": "nastolkus, SkAZi", 
   "package_id": "kango-6acf0b9c-9740-44ff-b3d8-0d5166c52082", 
   "background_scripts": [
-    "main.js"
+    "js/utils.js", 
+    "js/models.js", 
+    "js/background.js"
   ], 
   "homepage_url": "http://nastolkus.com/naster/", 
   "version": "0.1", 

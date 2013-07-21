@@ -7,7 +7,9 @@
   "name": "Tesera Notifier", 
   "creator": "nastolkus, SkAZi", 
   "background_scripts": [
-    "main.js"
+    "js/utils.js", 
+    "js/models.js", 
+    "js/background.js"
   ], 
   "homepage_url": "http://nastolkus.com/naster/", 
   "version": "0.1", 

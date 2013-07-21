@@ -7,6 +7,7 @@ toast(
     'js/events.js',
     
     function(){
+        window.DEBUG = Models.Settings.get("debug", true);
         Background.init();
     }
 );
