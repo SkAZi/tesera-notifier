@@ -21,7 +21,7 @@ if(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)) != runt
 output += "\n            <li class=\"day-header\">\n                ";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)), env.autoesc);
 output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"comment:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDDHH"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
 output += ":*\"></a>\n            </li>\n        ";
 }
 output += "\n        ";
@@ -31,10 +31,10 @@ output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3)
 output += "\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"title", env.autoesc), env.autoesc);
 output += "</a>\n                <a href=\"#\" class=\"remove\" data-rel=\"comment:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDDHH"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
 output += ":";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"id", env.autoesc), env.autoesc);
-output += ":*\"></a>\n            </li>\n        ";
+output += "*\"></a>\n            </li>\n        ";
 }
 output += "\n\n        <li id=\"comment";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
@@ -108,7 +108,7 @@ output += "\n            <li class=\"day-header\">\n                ";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)), env.autoesc);
 output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"log:";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
-output += ":*\"></a>\n            </li>\n        ";
+output += "*\"></a>\n            </li>\n        ";
 }
 output += "\n        ";
 if(runtime.memberLookup((t_3),"type", env.autoesc) != runtime.contextOrFrameLookup(context, frame, "last_type") || env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)) != runtime.contextOrFrameLookup(context, frame, "last_day")) {
@@ -118,7 +118,7 @@ output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"log:";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
 output += ":";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"type", env.autoesc), env.autoesc);
-output += ":*\"></a>\n            </li>\n        ";
+output += "*\"></a>\n            </li>\n        ";
 }
 output += "\n\n        <li class=\"delete\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
@@ -399,9 +399,9 @@ output += "не проверять";
 output += "</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Примерный расход трафика</div>\n    <div class=\"stats\">\n        <dl class=\"stat\">\n            <dt class=\"hour\">в час:</dt>\n            <dd class=\"hour\">";
+output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Примерный расход трафика</div>\n    <div class=\"stats\">\n        <dl class=\"stat\">\n            <dt class=\"hour\">в час:</dt>\n            <dd class=\"hour\">~";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "hour"), env.autoesc);
-output += " Мб</dd>\n            <dt class=\"day\">в день:</dt>\n            <dd class=\"day\">";
+output += " Мб</dd>\n            <dt class=\"day\">в день:</dt>\n            <dd class=\"day\">~";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "day"), env.autoesc);
 output += " Мб</dd>\n        </dl>\n    </div>\n\n    <div class=\"header\">Настройки истории</div>\n\n    <div class=\"row\">\n        <span>Искать старые записи:</span> <select name=\"max_pages\">\n            ";
 frame = frame.push();

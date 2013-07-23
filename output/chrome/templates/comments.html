@@ -7,13 +7,13 @@
         {% if object.day|date != last_day %}
             <li class="day-header">
                 {{ object.day|date }}
-                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDDHH") }}:*"></a>
+                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDD") }}:*"></a>
             </li>
         {% endif %}
         {% if object.target.id != last_target or object.day|date != last_day %}
             <li class="header">
                 <a href="{{ object.target.url }}" class="open">{{ object.target.title }}</a>
-                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDDHH") }}:{{ object.target.id }}:*"></a>
+                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDD") }}:{{ object.target.id }}*"></a>
             </li>
         {% endif %}
 

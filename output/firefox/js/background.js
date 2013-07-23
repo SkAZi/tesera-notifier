@@ -22,6 +22,7 @@ Background = {
     updateInterval: function(){
         if(this._interval) clearInterval(this._interval);
         this._interval = setInterval(this.update, Models.Settings.get("interval")*1000);
+        Core.Pool.updateIntervals();
     },
 
     updateWorld: function(){
@@ -105,12 +106,16 @@ Background = {
 
     mass_subscribe: function(data){
         for(var i=data.length;i--;){
-            this.subscribe({
-                'url': data[i].url,
-                'title': data[i].topic || data[i].title,
-                'sbtype': data[i].sbtype || 2,
-                'last_comment': data[i].lastnum || data[i].last_comment
-            });
+            try{
+                this.subscribe({
+                    'url': data[i].url,
+                    'title': data[i].topic || data[i].title,
+                    'sbtype': data[i].sbtype || 2,
+                    'last_comment': data[i].lastnum || data[i].last_comment
+                });
+            } catch(e) {
+                Core.log('Import failed: ' + JSON.stringify(data[i]), 'Error');
+            }
         }
         return true;
     }

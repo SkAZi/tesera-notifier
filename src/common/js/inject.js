@@ -9,6 +9,8 @@
 $('head').append($('<style type="text/css">@import url("'+kango.io.getResourceUrl("res/inject.css")+'");</style>'));
 // ==/UserCSS==
 
+$('<div id="notifier-toolbar" />').prependTo($('body'));
+
 kango.addMessageListener('subscribe', function(event) {
     var data = event.data,
         comments = $('.item .user');

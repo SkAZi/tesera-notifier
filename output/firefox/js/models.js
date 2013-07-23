@@ -1,6 +1,6 @@
 var Models = {
     getKeys: function(mask, max, reversed){
-        var regexp = new RegExp('^'+(mask || '*').replace(/\*/g, '.*')+'$'),
+        var regexp = new RegExp('^'+(mask || '*').replace(/\*/g, '.*').replace(/\?/g, '.')+'$'),
             ret = [], _keys = kango.storage.getKeys();
         for(var i in _keys){
             if(regexp.test(_keys[i])){
@@ -26,11 +26,6 @@ var Models = {
             kango.storage.removeItem(_keys[i]);
         }
     },    
-
-    saveObject: function(obj){
-        return Models[obj["class"]]? 
-                Models[obj["class"]].save(obj): null;
-    },
 
     Common: {
         'get_uid': function(){
@@ -67,9 +62,11 @@ var Models = {
     },
 
     Events: {
+        '_class': "log",
+
         'get_uid': function(params){
-            return Models.Common.get_uid("log", Core.format_date(params.day), 
-                    params.type, (params.id? params.id: null));
+            return Models.Common.get_uid(this._class, Core.format_date(params.day), 
+                    params.type);
         },
 
         'get': function(id, def){
@@ -77,22 +74,48 @@ var Models = {
         },
 
         'list': function(){
-            return Models.getItems('log:*', 100, true);
+            return Models.getItems(this._class + ':*', 100, true);
         },
 
         'add': function(params){
             obj = this.get(this.get_uid(params), {
-                    "class": "Events",
+                    "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
+                    "ids": [],
                     "day": Core.strip_time(params.day),
                     "type": params.type,
                     "count": 0,
                     "target": params.target || null
                 });
 
-            obj.count++;
+            obj.ids.push(params.ids);
+            obj.count = obj.ids.length;
             return this.save(obj);
+        },
+
+        'remove': function(targets){
+            for(var i in targets){
+                if(targets[i].event){
+                    var target = targets[i],
+                        obj = this.get(this.get_uid({
+                                'day': new Date(target.date),
+                                'type': target['class']
+                            }));
+
+                    console.log(obj);
+
+                    if(!obj.uid) continue;
+
+                    if(obj.ids && obj.ids.length > 1 && obj.ids.indexOf(target.id) > -1){
+                        obj.ids.splice(obj.ids.indexOf(target.id), 1);
+                        obj.count--;
+                        this.save(obj);
+                    } else {
+                        kango.storage.removeItem(obj.uid);
+                    }
+                }
+            }
         },
 
         'save': function(obj){
@@ -103,28 +126,31 @@ var Models = {
     },
 
     Messages: {
+        '_class': "message",
+
         'get_uid': function(params){
-            return Models.Common.get_uid("message", params.id);
+            return Models.Common.get_uid(this._class, params.id);
         },
 
         'count': function(){
-            return Models.getKeys('message:*').length;
+            return Models.getKeys(this._class + ':*').length;
         },
 
         'list': function(){
-            return Models.getItems('message:*', 100, true);
+            return Models.getItems(this._class + ':*', 100, true);
         },
 
-        'add': function(params){
+        'add': function(params, event){
             return this.save({
-                    "class": "Messages",
+                    "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
                     "date": params.date, //?
                     "unread": true,
                     "from": params.from,
                     "title": params.title,
-                    "body": params.body
+                    "body": params.body,
+                    "event": event.uid
                 });
         },
 
@@ -135,29 +161,32 @@ var Models = {
     },
 
     Comments: {
+        '_class': "comment",
+
         'get_uid': function(params){
-            return Models.Common.get_uid("comment", Core.format_date(params.date, "%Y%M%D%H"),
+            return Models.Common.get_uid(this._class, Core.format_date(params.date, "%Y%M%D"),
                     params.target.id, params.id);
         },
 
         'count': function(){
-            return Models.getKeys('comment:*').length;
+            return Models.getKeys(this._class+':*').length;
         },
 
         'list': function(){
-            return Models.getItems('comment:*', 100, true);
+            return Models.getItems(this._class+':*', 100, true);
         },
 
-        'add': function(params){
+        'add': function(params, event){
             return this.save({
-                    "class": "Comments",
+                    "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
                     "date": params.date, //?
                     "target": params.target,
                     "from": params.from,
                     "title": params.title,
-                    "body": params.body
+                    "body": params.body,
+                    "event": event.uid
                 });
         },
 
@@ -168,8 +197,10 @@ var Models = {
     },
 
     Subscriptions: {
+        '_class': "subscription",
+
         'get_uid': function(params){
-            return Models.Common.get_uid("subscription", params.type, params.id);
+            return Models.Common.get_uid(this._class, params.type, params.id);
         },
 
         'get_last': function(params){
@@ -205,7 +236,7 @@ var Models = {
         },
 
         'list': function(){
-            return Models.getItems('subscription:*', 100);
+            return Models.getItems(this._class + ':*', 100);
         },
 
         'check': function(url){
@@ -226,7 +257,7 @@ var Models = {
             }
 
             obj = {
-                "class": "Subscriptions",
+                "class": this._class,
                 "uid": this.get_uid(params),
                 "id": params.id,
                 "sbtype": parseInt(data.sbtype),
@@ -292,7 +323,7 @@ var Models = {
 
         get: function(key){
             var settings = this.all();
-            return settings && settings[key] || Settings.defaults[key] || null;
+            return settings && settings[key] || this.defaults[key] || null;
         },
 
         reset: function(){
