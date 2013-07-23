@@ -1,10 +1,11 @@
+// TODO: разложить на Core и Utils
 var Core = {
     Tesera: {
         clean_url: function(url, full){
             return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)\/[^\/]*/, full? '$1$2': '$2');
         },
 
-        // TODO: Улучшить разбор url, учесть фото, видео, клубы, города...
+        // TODO: Улучшить разбор url (?)
         parse_url: function(url){
             var ret = {type: "", id: 0};
             if(url.indexOf('//tesera.ru/') < 0){
@@ -12,7 +13,6 @@ var Core = {
             }
 
             var parts = this.clean_url(url).split('/');
-            Core.log(parts);
             if(parts[0] == 'user' && Core.Tesera.humanize_type(parts[2])){
                 ret = {type: parts[2], id: parts[3]}
             } else if(parts.length > 2 && parts[parts.length-2] == 'photo' || parts[parts.length-2] == 'video'){
@@ -25,6 +25,7 @@ var Core = {
         },
 
         parse_title: function(title){
+            // TODO: Быть может парсить аккуратнее
             return title.split('|')[0].replace(/^ +| +$/g, '')
 
         },
@@ -283,8 +284,7 @@ var Core = {
         },
 
         'comments': function(job, text){
-
-            // Не туды
+            // TODO: Игнорировать собственные
             var id = 0,
                 html = this._buildDOM(text),
                 last_id = 0,
@@ -354,6 +354,8 @@ var Core = {
         },
 
         'games': function(job, text){
+            // TODO: Следить за новыми играми
+
             // update_filter/
             /*name:game_filter
             key:sort
@@ -383,6 +385,7 @@ var Core = {
             },
 
             'addHelper': function(job, callback){
+                // TODO: Быть может лучше стартовать задачу сразу
                 var split_url = job.url.split('/'),
                     page = parseInt(split_url[split_url.length-1] || 0) + 1;
 
@@ -497,10 +500,6 @@ var Core = {
 
         return Job;
     })(),
-
-    'uuid': function(){
-        return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-    },
 
     'format_date': function(date, format){
         var format = format || "%Y%M%D";

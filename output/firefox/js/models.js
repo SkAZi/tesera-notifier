@@ -1,6 +1,6 @@
 var Models = {
     getKeys: function(mask, max, reversed){
-        var regexp = new RegExp('^'+(mask || '*').replace(/\*/g, '.*')+'$'),
+        var regexp = new RegExp('^'+(mask || '*').replace(/\*/g, '.*').replace(/\?/g, '.')+'$'),
             ret = [], _keys = kango.storage.getKeys();
         for(var i in _keys){
             if(regexp.test(_keys[i])){

@@ -105,6 +105,7 @@ KangoAPI.onReady(function() {
 
         'remove': function(){
             // TODO: Проблема с очисткой «Неделю назад» и подобных
+            // TODO: Чистить Event при удалении связанных комментариев и сообщений
             var objects = $(this).attr('data-rel');
             Models.deleteItems(objects);
             kango.invokeAsync('Background.update_badge');
