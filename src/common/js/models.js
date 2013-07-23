@@ -253,6 +253,7 @@ var Models = {
                 obj;
 
             if(!params || !params.id){
+                Core.log('Subscribe failed, unsupported url: ' + JSON.stringify(data));
                 return null;
             }
 

@@ -14,7 +14,7 @@
     "js/background.js"
   ], 
   "homepage_url": "http://nastolkus.com/naster/", 
-  "version": "2.0.0", 
+  "version": "2.0.1", 
   "id": "{6ACF0B9C-9740-44FF-B3D8-0D5166C52082}", 
   "browser_button": {
     "caption": "Tesera Notifier", 

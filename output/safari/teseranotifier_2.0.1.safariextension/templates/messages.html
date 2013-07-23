@@ -1,0 +1,35 @@
+<ul class="list">
+    {% if object_list|length == 0 %}
+    <li class="empty">У вас нет непрочитанных сообщений</li>
+    {% endif %}
+
+    {% for object in object_list %}
+        {% if object.day|date != last_day %}
+            <li class="day-header">{{ object.day|date }}</li>
+        {% endif %}
+
+        <li id="message{{ object.id }}" {% if object.unread %}class="unread"{% endif %}>
+            <a href="http://tesera.ru/user/{{ object.from.name }}/" class="open"><img class="pic" src="http://tesera.ru/images/items/{{ object.from.id }},22/32x32/photo.jpg" width="32" height="32" alt="" title=""></a>
+            
+            <div class="text">
+                <p class="nick"><a href="http://tesera.ru/user/{{ object.from.name }}/" class="open">{{ object.from.name }}</a></p>
+                <h4><a href="http://tesera.ru/user/messages/" class="open">{{ object.title }}</a></h4>
+                <p class="content">{{ object.body }}</p>
+                
+                <!--
+                <p><a href="#" class="local answer">Ответить</a></p>
+                <form action="#message" method="post" class="hidden-form">
+                    <div class="row">
+                        <textarea name="message_comments" placeholder="Текст сообщения" cols="30" rows="10"></textarea>
+                    </div>
+
+                    <button type="submit">Написать</button>
+                </form>
+                -->
+            </div>
+            <a href="javascript:" class="remove" data-rel="{{ object.uid }}"></a>
+        </li>
+
+        {% set last_day = object.day|date %}
+    {% endfor %}
+</ul>
