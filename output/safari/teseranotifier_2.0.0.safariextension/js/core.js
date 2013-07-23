@@ -2,7 +2,7 @@
 var Core = {
     Tesera: {
         clean_url: function(url, full){
-            return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)\/[^\/]*/, full? '$1$2': '$2');
+            return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)(\/)[^\/]*/, full? '$1$2$3': '$2');
         },
 
         // TODO: Улучшить разбор url (?)
@@ -140,11 +140,13 @@ var Core = {
                                 'body': $this.find('div.body > p').html()
                             };
 
-                        Models.Messages.add(message);
-                        Models.Events.add({
-                            'day': message.date,
-                            'type': 'message'
-                        });
+                        Models.Messages.add(message,
+                            Models.Events.add({
+                                'type': 'message',
+                                'day': message.date,
+                                'ids': message.id
+                            })
+                        );
                         Background.update_badge();
                     }
 
@@ -310,7 +312,6 @@ var Core = {
 
                         if(!subscription.id) return; 
 
-                        console.log(subscription);
                         comment = {
                             'id': id,
                             'date': new Date(), // TODO: Вычислять реальную дату
@@ -328,13 +329,16 @@ var Core = {
                             'body': $this.find('div.body > p').html()
                         };
                         
-                        Models.Comments.add(comment);
-                        Models.Events.add({
-                            'id': comment.target.id,
-                            'day': comment.date,
-                            'type': 'comment',
-                            'target': comment.target
-                        });
+                        Models.Comments.add(comment, 
+                            Models.Events.add({
+                                'type': 'comment',
+                                'id': comment.target.id,
+                                'ids': comment.id,
+                                'day': comment.date,
+                                'target': comment.target
+                            })
+                        );
+                        
 
                         Background.update_badge();
                     }
@@ -438,6 +442,13 @@ var Core = {
                     job.execute();
                 } else {
                     Core.log("Pool is empty"); 
+                }
+            },
+
+            'updateIntervals': function(){
+                var settings = Models.Settings.all();
+                for(var i in this._pool){
+                    this._pool[i].period = settings[this._pool[i].type+'_interval']*60*1000;
                 }
             },
 

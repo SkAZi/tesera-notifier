@@ -22,6 +22,7 @@ Background = {
     updateInterval: function(){
         if(this._interval) clearInterval(this._interval);
         this._interval = setInterval(this.update, Models.Settings.get("interval")*1000);
+        Core.Pool.updateIntervals();
     },
 
     updateWorld: function(){

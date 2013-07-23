@@ -83,6 +83,7 @@ KangoAPI.onReady(function() {
 
         'reset_settings': function(){
             Models.Settings.reset();
+            kango.invokeAsync('Background.updateInterval');
             return Views.settings();
         },
 
@@ -95,7 +96,7 @@ KangoAPI.onReady(function() {
 
             kango.browser.tabs.getCurrent(function(tab){
                 tab.dispatchMessage('subscribe', {
-                    'url': tab.getUrl(),
+                    'url': Core.Tesera.clean_url(tab.getUrl(), true),
                     'title': tab.getTitle(),
                     'sbtype': parseInt($this.attr('data-sbtype'))           
                 });
@@ -105,11 +106,17 @@ KangoAPI.onReady(function() {
 
         'remove': function(){
             // TODO: Проблема с очисткой «Неделю назад» и подобных
-            // TODO: Чистить Event при удалении связанных комментариев и сообщений
             var objects = $(this).attr('data-rel');
+
+            if(objects.indexOf('log:') != 0){
+                var items = Models.getItems(objects);
+                console.log(items);
+                Models.Events.remove(items);
+            }
+
             Models.deleteItems(objects);
+
             kango.invokeAsync('Background.update_badge');
-            
             $('#tabs li a.active').click();
             return false;
         },
