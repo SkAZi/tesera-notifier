@@ -1,6 +1,6 @@
 <ul class="list">
     {% if object_list|length == 0 %}
-    <li class="empty">У вас пока нет подписок, их можно <a href="#" class="local">импортировать</a> из&nbsp;предыдущей версии.</li>
+    <li class="empty">У вас пока нет подписок, но их можно <a href="#" class="answer local">импортировать</a> из&nbsp;предыдущей версии.</li>
     {% endif %}
 
     {% for object in object_list %}
@@ -11,17 +11,31 @@
             <li class="header">
                 {{ object.type|humanize_type }}
                 {% if not object.active %}
-                <a href="#" class="remove" data-type="subscription-block" data-rel="{{ object.type }}"></a>
+                <!-- TODO: unactive only <a href="#" class="remove" data-rel="subscription:{{ object.type }}"></a> -->
                 {% endif %}
             </li>
         {% endif %}
 
         <li>
             <a href="{{ object.url }}" class="open">{{ object.title }}</a>
-            <a href="#" data-type="subscription" data-rel="{{ object.type }}:{{ object.id }}" class="remove"></a>
+            <a href="#" data-rel="{{ object.uid }}" class="remove"></a>
         </li>
 
         {% set last_active = object.active %}
         {% set last_type = object.type %}
     {% endfor %}
+
+    {% if object_list|length > 0 %}
+    <li class="subaction"><a href="#" class="answer local">Импортировать подписки</a></li>
+    {% endif %}
+
+    <li class="hidden-form">
+        <form action="#import-subscriptions" method="post">
+            <div class="row">
+                <textarea name="import_data" placeholder="Скопируйте текст экспорта из  дополнения прошлой версии" cols="30" rows="10"></textarea>
+            </div>
+
+            <button type="submit">Импортировать</button>
+        </form>
+    </li>
 </ul>

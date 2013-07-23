@@ -1,17 +1,3 @@
-<!--
-{
-    "id": (int),
-    "day": (date),
-    "target": (str),
-    "target_id": (int),
-    "target_type": (str),
-    "from": (str),
-    "from_id": (int),
-    "title": (str),
-    "body": (str)
-}
--->
-
 <ul class="list">
     {% if object_list|length == 0 %}
     <li class="empty">Пока нет новых комментариев</li>
@@ -21,13 +7,13 @@
         {% if object.day|date != last_day %}
             <li class="day-header">
                 {{ object.day|date }}
-                <a href="#" class="remove" data-type="comment" data-rel="{{ object.day|date("YYYYMMDD") }}:*"></a>
+                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDDHH") }}:*"></a>
             </li>
         {% endif %}
         {% if object.target.id != last_target or object.day|date != last_day %}
             <li class="header">
                 <a href="{{ object.target.url }}" class="open">{{ object.target.title }}</a>
-                <a href="#" class="remove" data-type="comment" data-rel="{{ object.day|date("YYYYMMDD") }}:{{ object.target.id }}:*"></a>
+                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDDHH") }}:{{ object.target.id }}:*"></a>
             </li>
         {% endif %}
 
@@ -40,7 +26,7 @@
                 
                 <!--
                 <p><a href="#" class="local answer">Ответить</a></p>
-                <form action="http://tesera.ru/user_message0/" method="post">
+                <form action="#message" method="post" class="hidden-form">
                     <div class="row">
                         <textarea name="message_comments" placeholder="Текст сообщения" cols="30" rows="10"></textarea>
                     </div>
@@ -49,7 +35,7 @@
                 </form>
                 -->
             </div>
-            <a href="#" class="remove" data-type="comment" data-rel="{{ object.day }}:{{ object.target.id }}:{{ object.id }}"></a>
+            <a href="#" class="remove" data-rel="{{ object.uid }}"></a>
         </li>
 
         {% set last_day = object.day|date %}

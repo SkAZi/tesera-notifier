@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="res/popup.css">
+
+
+<div id="preload-pane"></div>
+
+<div id="login-pane">
+
+    <div class="centerer">
+        <img src="img/logo-big.png" alt="">
+
+        <form action="http://tesera.ru/" method="post" id="login-form">
+            <div class="row"><input type="text" value="" name="auth_login" placeholder="Имя пользователя" /></div>
+
+            <div class="row"><input type="password" value="" name="auth_password" placeholder="Пароль" /></div>
+
+            <div class="row">
+                <button>Войти</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<div id="main-pane">
+    <div id="toolbar">
+        <span>Следить за ответами:</span>
+        <a href="#" class="local" data-sbtype="0">нет</a>
+        <a href="#" class="local" data-sbtype="1" style="display: none">на мои реплики</a>
+        <a href="#" class="local" data-sbtype="2">всех</a>
+    </div>
+    
+    <ul id="tabs">
+        <li><a class="active" href="#events-tab" data-view="events"><img src="img/events.png" alt=""></a></li>
+        <li><a href="#messages-tab" data-view="messages"><img src="img/messages.png" alt=""><span class="hidden badge"></span></a></li>
+        <li><a href="#comments-tab" data-view="comments"><img src="img/comments.png" alt=""><span class="hidden badge"></span></a></li>
+        <li><a href="#subscriptions-tab" data-view="subscriptions"><img src="img/subscriptions.png" alt=""></a></li>
+        <li><a href="#settings-tab" data-view="settings"><img src="img/settings.png" alt=""></a></li>
+    </ul>
+
+    <div id="tabs-content">
+        <div id="events-tab" class="active"></div>
+        <div id="messages-tab"></div>
+        <div id="comments-tab"></div>
+        <div id="subscriptions-tab"></div>
+        <div id="settings-tab"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="kango-ui/kango_api.js"></script>
+<script type="text/javascript" src="js/lib/md5.js"></script>
+<script type="text/javascript" src="js/lib/moment.js"></script>
+<script type="text/javascript" src="js/lib/zepto.js"></script>
+<script type="text/javascript" src="js/lib/nunjucks.js"></script>
+<script type="text/javascript" src="js/core.js"></script>
+<script type="text/javascript" src="js/models.js"></script>
+<script type="text/javascript" src="js/templates.js"></script>
+<script type="text/javascript" src="js/popup.js"></script>

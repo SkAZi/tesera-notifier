@@ -18,7 +18,7 @@
                 
                 <!--
                 <p><a href="#" class="local answer">Ответить</a></p>
-                <form action="http://tesera.ru/user_message0/" method="post">
+                <form action="#message" method="post" class="hidden-form">
                     <div class="row">
                         <textarea name="message_comments" placeholder="Текст сообщения" cols="30" rows="10"></textarea>
                     </div>
@@ -27,7 +27,7 @@
                 </form>
                 -->
             </div>
-            <a href="javascript:" class="remove" data-type="message" data-rel="{{ object.id }}"></a>
+            <a href="javascript:" class="remove" data-rel="{{ object.uid }}"></a>
         </li>
 
         {% set last_day = object.day|date %}

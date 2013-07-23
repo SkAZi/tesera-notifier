@@ -1,0 +1,41 @@
+<ul class="list">
+    {% if object_list|length == 0 %}
+    <li class="empty">У вас пока нет ни одного события</li>
+    {% endif %}
+
+    {% for object in object_list %}
+        {% if object.day|date != last_day %}
+            <li class="day-header">
+                {{ object.day|date }}
+                <a href="#" class="remove" data-rel="log:{{ object.day|date("YYYYMMDD") }}:*"></a>
+            </li>
+        {% endif %}
+        {% if object.type != last_type or object.day|date != last_day %}
+            <li class="header">
+                {{ object.type|humanize_type }}
+                <a href="#" class="remove" data-rel="log:{{ object.day|date("YYYYMMDD") }}:{{ object.type }}:*"></a>
+            </li>
+        {% endif %}
+
+        <li class="delete" data-rel="{{ object.uid }}">
+        {% if object.type == 'message' %}
+            У вас <a href="http://tesera.ru/user/messages/" class="open">{{ object.count|pluralize("новое сообщение", "новых сообщения", "новых сообщений") }}</a>
+        {% elif object.type == 'comment' %}
+            {{ object.count|pluralize("новый комментарий", "новых комментария", "новых комментариев") }} к «<a href="{{ object.target.url }}" class="open">{{ object.target.title }}</a>»
+        {% elif object.type == 'article' %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} <a href="http://tesera.ru/articles/" class="open">{{ object.count|pluralize("статья", "статьи", "статей") }}</a>
+        {% elif object.type == 'new' %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} <a href="http://tesera.ru/news/" class="open">{{ object.count|pluralize("новость", "новости", "новостей") }}</a>
+        {% elif object.type == 'journal' %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} <a href="http://tesera.ru/diaries/journal/" class="open">{{ object.count|pluralize("запись в дневнике", "записи в дневниках", "записей в дневниках") }}</a>
+        {% elif object.type == 'thoughtus' %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} <a href="http://tesera.ru/diaries/thoughtus/" class="open">{{ object.count|pluralize("мысль", "мысли", "мыслей") }}</a>
+        {% elif object.type == 'game' %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} <a href="http://tesera.ru/games/" class="open">{{ object.count|pluralize("новая игра", "новых игры", "новых игр") }}</a>
+        {% endif %}
+        </li>
+
+        {% set last_day = object.day|date %}
+        {% set last_type = object.type %}
+    {% endfor %}
+</ul>

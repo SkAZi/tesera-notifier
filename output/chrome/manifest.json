@@ -2,8 +2,8 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*", 
-        "https://*/*"
+        "http://tesera.ru/*", 
+        "https://tesera.ru/*"
       ], 
       "all_frames": true, 
       "run_at": "document_start", 
@@ -30,13 +30,14 @@
   "manifest_version": 2, 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", 
   "browser_action": {
+    "default_popup": "popup.html", 
     "default_icon": "icons/button.png", 
     "default_title": "Tesera Notifier"
   }, 
   "permissions": [
     "tabs", 
-    "http://*/*", 
-    "https://*/*", 
+    "http://tesera.ru/*", 
+    "https://tesera.ru/*", 
     "contextMenus", 
     "webNavigation", 
     "notifications", 

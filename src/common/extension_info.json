@@ -1,19 +1,27 @@
 {
   "name": "Tesera Notifier",
+  "version": "0.1", 
   "description": "Tesera Notifier extension by nastolkus and SkAZi",
   "creator": "nastolkus, SkAZi", 
   
   "homepage_url": "http://nastolkus.com/naster/",
-  "version": "0.1", 
 
   "browser_button": {
     "caption": "Tesera Notifier", 
     "icon": "icons/button.png", 
-    "tooltipText": "Tesera Notifier"
+    "tooltipText": "Tesera Notifier",
+    "popup": {
+      "url": "popup.html",
+      "width": 400,
+      "height": 500
+    }
   }, 
 
   "background_scripts": [
-    "main.js"
+    "js/lib/zepto.js",
+    "js/core.js",
+    "js/models.js",
+    "js/background.js"
   ], 
 
   "content_scripts": [

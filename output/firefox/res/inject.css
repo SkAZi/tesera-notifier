@@ -1,0 +1,17 @@
+div.commentos div.new-item{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+div.commentos div.new-item::before{
+    content: "";
+    display: block;
+    position: absolute;
+    background: #FF0;
+    opacity: .1;
+    border-radius: 10px;
+    left: -5px;
+    right: -5px;
+    top: -5px;
+    bottom: -5px;
+} 

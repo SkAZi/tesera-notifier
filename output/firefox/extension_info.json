@@ -8,7 +8,10 @@
   "creator": "nastolkus, SkAZi", 
   "package_id": "kango-6acf0b9c-9740-44ff-b3d8-0d5166c52082", 
   "background_scripts": [
-    "main.js"
+    "js/lib/zepto.js", 
+    "js/core.js", 
+    "js/models.js", 
+    "js/background.js"
   ], 
   "homepage_url": "http://nastolkus.com/naster/", 
   "version": "0.1", 
@@ -16,6 +19,11 @@
   "browser_button": {
     "caption": "Tesera Notifier", 
     "tooltipText": "Tesera Notifier", 
+    "popup": {
+      "url": "popup.html", 
+      "width": 400, 
+      "height": 500
+    }, 
     "icon": "icons/button.png"
   }
 }
