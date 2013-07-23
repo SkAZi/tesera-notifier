@@ -60,6 +60,15 @@ a:active{
     outline: none;
 }
 
+a.unseen{
+    color: #000;
+    text-decoration: none;
+}
+
+a.unseen:hover{
+    color: #555;
+}
+
 #preload-pane, #login-pane{
     position: fixed;
     top: 0;

@@ -13,19 +13,11 @@
             
             <div class="text">
                 <p class="nick"><a href="http://tesera.ru/user/{{ object.from.name }}/" class="open">{{ object.from.name }}</a></p>
-                <h4><a href="http://tesera.ru/user/messages/" class="open">{{ object.title }}</a></h4>
-                <p class="content">{{ object.body }}</p>
+                <h4><a href="http://tesera.ru/user/messages/#post{{ object.id }}" class="open">{{ object.title }}</a></h4>
+                <p class="content"><a href="http://tesera.ru/user/messages/#post{{ object.id }}" class="open unseen">{{ object.body }}</a></p>
                 
-                <!--
-                <p><a href="#" class="local answer">Ответить</a></p>
-                <form action="#message" method="post" class="hidden-form">
-                    <div class="row">
-                        <textarea name="message_comments" placeholder="Текст сообщения" cols="30" rows="10"></textarea>
-                    </div>
-
-                    <button type="submit">Написать</button>
-                </form>
-                -->
+                <!-- p><a href="#" class="local answer">Ответить</a></p>
+                <div class="hidden-form"></div -->
             </div>
             <a href="javascript:" class="remove" data-rel="{{ object.uid }}"></a>
         </li>

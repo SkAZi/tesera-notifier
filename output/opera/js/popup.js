@@ -25,7 +25,22 @@ KangoAPI.onReady(function() {
         },
 
         'open_form': function(){
-            $(this).closest('p,li,div.header').next('.hidden-form').toggle().find('textarea').focus();
+            var $this = $(this);
+                form = $this.closest('p,li').next('.hidden-form');
+
+            if($this.hasClass('active')){
+                $this.addClass('active');
+                form.html('');
+            } else {
+                $this.removeClass('active');
+                form.html(
+                    nunjucks.env.render('form_'+$this.attr('data-rel')+'.html', { 
+                        object: kango.storage.getItem($this.attr('data-id'))
+                    })
+                );
+                form.toggle().find('textarea').focus();
+            }
+
             return false;            
         },
 
@@ -110,7 +125,6 @@ KangoAPI.onReady(function() {
 
             if(objects.indexOf('log:') != 0){
                 var items = Models.getItems(objects);
-                console.log(items);
                 Models.Events.remove(items);
             }
 
@@ -143,26 +157,43 @@ KangoAPI.onReady(function() {
         },
 
         'check_auth': function(){
-            var xmlhttp = kango.xhr.getXMLHttpRequest();
-            xmlhttp.open('GET', 'http://tesera.ru/', true);
-            xmlhttp.onreadystatechange = function(){
-                if(xmlhttp.readyState == 4) {
-                    Models.State.authorized = ((xmlhttp.responseText.indexOf('id="open-authorize"') == -1))? 
-                                            new Date(): 
-                                            false;
+            kango.xhr.send({
+                'url': 'http://tesera.ru/',
+                'method': 'GET',
+                'async': true
+            }, function(result){
+                Models.State.authorized = ((result.response.indexOf('id="open-authorize"') == -1))? 
+                                        new Date(): 
+                                        false;
 
-                    if(Models.State.authorized){
-                        Models.State.user = (xmlhttp.responseText.match(/<a href="\/user\/" class="name"><span>([^<]*)<\/span>/) || [])[1] || null;
-                    }
-
-                    kango.dispatchMessage('syncState', {'State': Models.State});
-                    $('#preload-pane').hide();
-                    if(Models.State.authorized){
-                        $('#login-pane').hide();
-                    }
+                if(Models.State.authorized){
+                    Models.State.user = (result.response.match(/<a href="\/user\/" class="name"><span>([^<]*)<\/span>/) || [])[1] || null;
                 }
-            }
-            xmlhttp.send(null);
+
+                kango.dispatchMessage('syncState', {'State': Models.State});
+                $('#preload-pane').hide();
+                if(Models.State.authorized){
+                    $('#login-pane').hide();
+                }
+            });
+            return false;
+        },
+
+        'post_comment': function(){
+            var $this = $(this), 
+                comment = $this.find('textarea'),
+                params = {};
+
+            $('#preload-pane').show();
+            kango.xhr.send({
+                'url': $this.attr('action'),
+                'method': 'POST',
+                'async': true,
+                'params': $this.serialize()
+            }, function(status){
+                View.remove.apply($this.closest('li').find('a.remove'));
+                $('#preload-pane').hide();
+            });
             return false;
         },
 
@@ -191,19 +222,24 @@ KangoAPI.onReady(function() {
 
 
     /* Routes */
-    $('#login-form').on('submit', Views.login);
+    $('#toolbar').on('click', '.local', Views.subscribe);
     $('#tabs').on('click', 'li a', Views.switch_tab);
+
     $('#tabs-content').on('click', '.list a.answer', Views.open_form);
     $('#tabs-content').on('click', '.list a.remove,.list .delete', Views.remove);
     $('#tabs-content').on('click', '.list a.open', Views.open);
-    $('#toolbar').on('click', '.local', Views.subscribe);
-    $('#tabs-content').on('submit', 'form[action="#import-subscriptions"]', 
-                                     Views.import);
+    $('#tabs-content').on('click', 'form[action="#save-settings"] button',
+                                     Views.reset_settings);
+
     $('#tabs-content').on('change', ['form[action="#save-settings"] input',
                                      'form[action="#save-settings"] select'].join(','), 
                                      Views.save_settings);
-    $('#tabs-content').on('click', 'form[action="#save-settings"] button',
-                                     Views.reset_settings);
+
+    $('#login-form').on('submit', Views.login);
+    $('#tabs-content').on('submit', 'form.import-subscriptions', 
+                                     Views.import);
+    $('#tabs-content').on('submit', 'form.post-comment', 
+                                     Views.post_comment);
 
     /* Events */
 

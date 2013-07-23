@@ -48,13 +48,23 @@ output += "/\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "</a></p>\n                ";
 if(runtime.memberLookup((t_3),"title", env.autoesc)) {
-output += "<h4>";
+output += "<h4><a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"url", env.autoesc), env.autoesc);
+output += "comments#post";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
+output += "\" class=\"open unseen\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"title", env.autoesc), env.autoesc);
-output += "</h4>";
+output += "</a></h4>";
 }
-output += "\n                <p class=\"content\">";
+output += "\n                <p class=\"content\"><a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"url", env.autoesc), env.autoesc);
+output += "comments#post";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
+output += "\" class=\"open unseen\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"body", env.autoesc), env.autoesc);
-output += "</p>\n                \n                <!--\n                <p><a href=\"#\" class=\"local answer\">Ответить</a></p>\n                <form action=\"#message\" method=\"post\" class=\"hidden-form\">\n                    <div class=\"row\">\n                        <textarea name=\"message_comments\" placeholder=\"Текст сообщения\" cols=\"30\" rows=\"10\"></textarea>\n                    </div>\n\n                    <button type=\"submit\">Написать</button>\n                </form>\n                -->\n            </div>\n            <a href=\"#\" class=\"remove\" data-rel=\"";
+output += "</a></p>\n                \n                <!-- p><a href=\"#\" class=\"local answer\" data-id=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
+output += "\" data-rel=\"comment\">Ответить</a></p>\n                <div class=\"hidden-form\"></div -->\n            </div>\n            <a href=\"#\" class=\"remove\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "\"></a>\n        </li>\n\n        ";
 var t_4;
@@ -214,6 +224,36 @@ root: root
 };
 
 })();
+templates["form_comment.html"] = (function() {
+function root(env, context, frame, runtime) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<form method=\"post\" action=\"http://tesera.ru/";
+if(runtime.memberLookup((runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "object")),"target", env.autoesc)),"type", env.autoesc) == "game") {
+output += "game";
+}
+else {
+output += "item";
+}
+output += "_comment0/\" enctype=\"multipart/form-data\" class=\"post-comment\">\n    <input type=\"hidden\" name=\"id\" value=\"0\">\n    <input type=\"hidden\" name=\"comment_pid\" value=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "object")),"id", env.autoesc), env.autoesc);
+output += "\">\n    <input type=\"hidden\" name=\"comment_board_id\" value=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "object")),"target", env.autoesc)),"id", env.autoesc), env.autoesc);
+output += "\">\n    <input type=\"hidden\" name=\"comment_title\" value=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "object")),"title", env.autoesc), env.autoesc);
+output += "\">\n    <input type=\"hidden\" name=\"comment_itemcat\" value=\"\">\n    <input type=\"hidden\" name=\"comment_save\" value=\"1\">\n    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"10000000\">\n    <input type=\"hidden\" name=\"popupid\" value=\"popuper_item_comment\">\n    <input type=\"hidden\" name=\"auth_uid\" value=\"6179\">\n\n    <div class=\"row\">\n        <textarea name=\"comment_comments\" placeholder=\"Текст сообщения\" cols=\"30\" rows=\"10\"></textarea>\n    </div>\n\n    <button type=\"submit\">Ответить</button>\n</form>";
+return output;
+} catch (e) {
+  runtime.handleError(e, lineno, colno);
+}
+}
+return {
+root: root
+};
+
+})();
 templates["messages.html"] = (function() {
 function root(env, context, frame, runtime) {
 var lineno = null;
@@ -250,11 +290,15 @@ output += ",22/32x32/photo.jpg\" width=\"32\" height=\"32\" alt=\"\" title=\"\">
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "/\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
-output += "</a></p>\n                <h4><a href=\"http://tesera.ru/user/messages/\" class=\"open\">";
+output += "</a></p>\n                <h4><a href=\"http://tesera.ru/user/messages/#post";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
+output += "\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"title", env.autoesc), env.autoesc);
-output += "</a></h4>\n                <p class=\"content\">";
+output += "</a></h4>\n                <p class=\"content\"><a href=\"http://tesera.ru/user/messages/#post";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
+output += "\" class=\"open unseen\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"body", env.autoesc), env.autoesc);
-output += "</p>\n                \n                <!--\n                <p><a href=\"#\" class=\"local answer\">Ответить</a></p>\n                <form action=\"#message\" method=\"post\" class=\"hidden-form\">\n                    <div class=\"row\">\n                        <textarea name=\"message_comments\" placeholder=\"Текст сообщения\" cols=\"30\" rows=\"10\"></textarea>\n                    </div>\n\n                    <button type=\"submit\">Написать</button>\n                </form>\n                -->\n            </div>\n            <a href=\"javascript:\" class=\"remove\" data-rel=\"";
+output += "</a></p>\n                \n                <!-- p><a href=\"#\" class=\"local answer\">Ответить</a></p>\n                <div class=\"hidden-form\"></div -->\n            </div>\n            <a href=\"javascript:\" class=\"remove\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "\"></a>\n        </li>\n\n        ";
 var t_4;
@@ -543,7 +587,7 @@ output += "\n\n    ";
 if(env.getFilter("length")(runtime.contextOrFrameLookup(context, frame, "object_list")) > 0) {
 output += "\n    <li class=\"subaction\"><a href=\"#\" class=\"answer local\">Импортировать подписки</a></li>\n    ";
 }
-output += "\n\n    <li class=\"hidden-form\">\n        <form action=\"#import-subscriptions\" method=\"post\">\n            <div class=\"row\">\n                <textarea name=\"import_data\" placeholder=\"Скопируйте текст экспорта из  дополнения прошлой версии\" cols=\"30\" rows=\"10\"></textarea>\n            </div>\n\n            <button type=\"submit\">Импортировать</button>\n        </form>\n    </li>\n</ul>";
+output += "\n\n    <li class=\"hidden-form\">\n        <form action=\"\" class=\"import-subscriptions\" method=\"post\">\n            <div class=\"row\">\n                <textarea name=\"import_data\" placeholder=\"Скопируйте текст экспорта из  дополнения прошлой версии\" cols=\"30\" rows=\"10\"></textarea>\n            </div>\n\n            <button type=\"submit\">Импортировать</button>\n        </form>\n    </li>\n</ul>";
 return output;
 } catch (e) {
   runtime.handleError(e, lineno, colno);

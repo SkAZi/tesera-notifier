@@ -389,7 +389,6 @@ var Core = {
             },
 
             'addHelper': function(job, callback){
-                // TODO: Быть может лучше стартовать задачу сразу
                 var split_url = job.url.split('/'),
                     page = parseInt(split_url[split_url.length-1] || 0) + 1;
 
@@ -400,7 +399,12 @@ var Core = {
                 split_url[split_url.length-1] = page;
                 this._pool.unshift(new Core.Job(
                     split_url.join("/"), new Date(), job.type, null, callback
-                ));            
+                ));
+
+                var self = this;
+                setTimeout(function(){
+                    self.executeNextJob(true);
+                }, 500);
             },
 
             'removeJob': function(job){
