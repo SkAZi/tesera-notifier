@@ -253,7 +253,7 @@ var Models = {
                 obj;
 
             if(!params || !params.id){
-                return none;
+                return null;
             }
 
             obj = {
