@@ -8,7 +8,8 @@
   "creator": "nastolkus, SkAZi", 
   "developer_id": "YOUR_SAFARI_DEVELOPER_ID", 
   "background_scripts": [
-    "js/utils.js", 
+    "js/lib/zepto.js", 
+    "js/core.js", 
     "js/models.js", 
     "js/background.js"
   ], 
@@ -18,6 +19,11 @@
   "browser_button": {
     "caption": "Tesera Notifier", 
     "tooltipText": "Tesera Notifier", 
+    "popup": {
+      "url": "popup.html", 
+      "width": 400, 
+      "height": 500
+    }, 
     "icon": "icons/button.png"
   }
 }
