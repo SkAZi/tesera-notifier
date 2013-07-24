@@ -41,6 +41,10 @@
 
 > git checkout develop
 
+7) Инициализируем flow
+
+> git flow init
+
 
 Можно начинать работать.
 
