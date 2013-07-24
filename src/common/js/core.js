@@ -184,7 +184,7 @@ var Core = {
                     id = parseInt($this.find('h3 a').attr('href').replace('/new/', ''));
                     if(id > last_news.id){
                         Models.Events.add({
-                            'day': new Date(),
+                            'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'new'
                         });
                         Background.update_badge();
@@ -224,7 +224,7 @@ var Core = {
                     id = parseInt($this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
                     if(id > last_article.id){
                         Models.Events.add({
-                            'day': new Date(),
+                            'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'article'
                         });
                         Background.update_badge();
@@ -265,7 +265,7 @@ var Core = {
                     id = parseInt($this.find('.game-about a').attr('href').split('/')[4] || 0);
                     if(id > last_article.id){
                         Models.Events.add({
-                            'day': new Date(),
+                            'day': new Date(), // TODO: Вычислять реальную дату
                             'type': type
                         });
                         Background.update_badge();
@@ -286,7 +286,6 @@ var Core = {
         },
 
         'comments': function(job, text){
-            // TODO: Игнорировать собственные
             var id = 0,
                 html = this._buildDOM(text),
                 last_id = 0,
@@ -311,6 +310,7 @@ var Core = {
                             comment;
 
                         if(!subscription.id) return; 
+                        if(name.length && name.text() == Models.State.user) return;
 
                         comment = {
                             'id': id,
@@ -389,7 +389,6 @@ var Core = {
             },
 
             'addHelper': function(job, callback){
-                // TODO: Быть может лучше стартовать задачу сразу
                 var split_url = job.url.split('/'),
                     page = parseInt(split_url[split_url.length-1] || 0) + 1;
 
@@ -400,7 +399,12 @@ var Core = {
                 split_url[split_url.length-1] = page;
                 this._pool.unshift(new Core.Job(
                     split_url.join("/"), new Date(), job.type, null, callback
-                ));            
+                ));
+
+                var self = this;
+                setTimeout(function(){
+                    self.executeNextJob(true);
+                }, 500);
             },
 
             'removeJob': function(job){

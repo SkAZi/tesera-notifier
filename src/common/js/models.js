@@ -66,7 +66,7 @@ var Models = {
 
         'get_uid': function(params){
             return Models.Common.get_uid(this._class, Core.format_date(params.day), 
-                    params.type);
+                    params.type, params.target? params.target.id: null);
         },
 
         'get': function(id, def){
@@ -100,10 +100,9 @@ var Models = {
                     var target = targets[i],
                         obj = this.get(this.get_uid({
                                 'day': new Date(target.date),
-                                'type': target['class']
+                                'type': target['class'],
+                                'target': target.target
                             }));
-
-                    console.log(obj);
 
                     if(!obj.uid) continue;
 
@@ -253,6 +252,7 @@ var Models = {
                 obj;
 
             if(!params || !params.id){
+                Core.log('Subscribe failed, unsupported url: ' + JSON.stringify(data));
                 return null;
             }
 

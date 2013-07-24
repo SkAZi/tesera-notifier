@@ -11,7 +11,7 @@
             <li class="header">
                 {{ object.type|humanize_type }}
                 {% if not object.active %}
-                <!-- TODO: unactive only <a href="#" class="remove" data-rel="subscription:{{ object.type }}"></a> -->
+                <a href="#" class="remove" data-rel="subscription:{{ object.type }}"></a>
                 {% endif %}
             </li>
         {% endif %}
@@ -30,7 +30,7 @@
     {% endif %}
 
     <li class="hidden-form">
-        <form action="#import-subscriptions" method="post">
+        <form action="" class="import-subscriptions" method="post">
             <div class="row">
                 <textarea name="import_data" placeholder="Скопируйте текст экспорта из  дополнения прошлой версии" cols="30" rows="10"></textarea>
             </div>

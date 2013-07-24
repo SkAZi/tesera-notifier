@@ -9,7 +9,7 @@
 $('head').append($('<style type="text/css">@import url("'+kango.io.getResourceUrl("res/inject.css")+'");</style>'));
 // ==/UserCSS==
 
-$('<div id="notifier-toolbar" />').prependTo($('body'));
+// $('<div id="notifier-toolbar" />').prependTo($('body'));
 
 kango.addMessageListener('subscribe', function(event) {
     var data = event.data,
@@ -32,7 +32,7 @@ $(function(){
 
     kango.invokeAsync('Core.Tesera.parse_url', location.href, function(params){
         if(!params.id){
-            if(location.pathname == 'location.pathname'){
+            if(location.pathname == '/user/messages/'){
                 get_method = 'Models.Common.get_last';
                 set_method = 'Models.Common.set_last';
                 params = 'messages';
