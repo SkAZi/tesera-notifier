@@ -30,15 +30,20 @@ KangoAPI.onReady(function() {
 
             if($this.hasClass('active')){
                 $this.addClass('active');
-                form.html('');
+                form.hide();
+                if(form.hasClass('post-comment')){
+                    form.html('');
+                }
             } else {
                 $this.removeClass('active');
-                form.html(
-                    nunjucks.env.render('form_'+$this.attr('data-rel')+'.html', { 
-                        object: kango.storage.getItem($this.attr('data-id'))
-                    })
-                );
-                form.toggle().find('textarea').focus();
+                if(form.hasClass('post-comment')){
+                    form.html(
+                        nunjucks.env.render('form_'+$this.attr('data-rel')+'.html', { 
+                            object: kango.storage.getItem($this.attr('data-id'))
+                        })
+                    );
+                }
+                form.show().find('textarea').focus();
             }
 
             return false;            
