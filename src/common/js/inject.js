@@ -32,7 +32,7 @@ $(function(){
 
     kango.invokeAsync('Core.Tesera.parse_url', location.href, function(params){
         if(!params.id){
-            if(location.pathname == 'location.pathname'){
+            if(location.pathname == '/user/messages/'){
                 get_method = 'Models.Common.get_last';
                 set_method = 'Models.Common.set_last';
                 params = 'messages';

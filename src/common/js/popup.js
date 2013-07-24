@@ -265,9 +265,9 @@ KangoAPI.onReady(function() {
     kango.browser.tabs.getCurrent(function(tab){
         var subscribe = Models.Subscriptions.check(tab.getUrl());
         if(subscribe === null){
-            $('#toolbar').hide();
+            $('#toolbar > .wrapper').hide();
         } else {
-            $('#toolbar').show();
+            $('#toolbar > .wrapper').show();
             $('#toolbar .local').removeClass('active');
             $('#toolbar .local').eq(parseInt(subscribe)).addClass('active');
         }

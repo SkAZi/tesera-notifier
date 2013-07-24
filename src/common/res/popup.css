@@ -311,6 +311,8 @@ form button:active{
 #tabs-content{
     margin: 0 -20px;
     padding-bottom: 10px;
+    max-height: 500px;
+    overflow: auto;
 }
 
 #tabs-content > *{
