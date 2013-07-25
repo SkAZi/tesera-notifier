@@ -29,13 +29,13 @@ KangoAPI.onReady(function() {
                 form = $this.closest('p,li').next('.hidden-form');
 
             if($this.hasClass('active')){
-                $this.addClass('active');
+                $this.removeClass('active');
                 form.hide();
                 if(form.hasClass('post-comment')){
                     form.html('');
                 }
             } else {
-                $this.removeClass('active');
+                $this.addClass('active');
                 if(form.hasClass('post-comment')){
                     form.html(
                         nunjucks.env.render('form_'+$this.attr('data-rel')+'.html', { 
