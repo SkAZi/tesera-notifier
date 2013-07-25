@@ -36,5 +36,5 @@ div.commentos div.new-item::before{
     right: -5px;
     top: -5px;
     bottom: -5px;
-    z-index: 0;
+    z-index: -1;
 } 
