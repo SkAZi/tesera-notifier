@@ -1,4 +1,4 @@
-Background = {
+var Background = {
     _interval: null,
 
     init: function(){
@@ -7,7 +7,7 @@ Background = {
 
         this.updateWorld();
         this.updateInterval();
-        this.update_badge();
+        this.updateBadge();
     },
 
     'syncState': function(data){
@@ -69,11 +69,11 @@ Background = {
     },
 
     update: function(){
-        Core.log("Update fired.");
+        Utils.log("Update fired.");
         Core.Pool.executeNextJob();
     },
 
-    update_badge: function(){
+    updateBadge: function(){
         var count = Models.getKeys('log:*').length;
         kango.ui.browserButton.setBadgeValue(count<100? count: '99+');
     },
@@ -97,14 +97,14 @@ Background = {
     subscribe: function(data){
         if(data.sbtype !== null){
             Models.Subscriptions.change(data);
-            Core.log("Subscribed: " + JSON.stringify(data));
+            Utils.log("Subscribed: " + JSON.stringify(data));
         } else {
             Models.Subscriptions.delete(data.url);
-            Core.log("Unsubscribed: " + JSON.stringify(data));
+            Utils.log("Unsubscribed: " + JSON.stringify(data));
         }
     },
 
-    mass_subscribe: function(data){
+    massSubscribe: function(data){
         for(var i=data.length;i--;){
             this.subscribe({
                 'url': data[i].url,

@@ -1,88 +1,4 @@
-// TODO: разложить на Core и Utils
 var Core = {
-    Tesera: {
-        clean_url: function(url, full){
-            return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)(\/)[^\/]*/, full? '$1$2$3': '$2');
-        },
-
-        // TODO: Улучшить разбор url (?)
-        parse_url: function(url){
-            var ret = {type: "", id: 0};
-            if(url.indexOf('//tesera.ru/') < 0){
-                return ret;
-            }
-
-            var parts = this.clean_url(url).split('/');
-            if(parts[0] == 'user' && Core.Tesera.humanize_type(parts[2])){
-                ret = {type: parts[2], id: parts[3]}
-            } else if(parts.length > 2 && parts[parts.length-2] == 'photo' || parts[parts.length-2] == 'video'){
-                ret = {type: parts[parts.length-2], id: parts[parts.length-1]}
-            } else if(parts.length > 1 && parts.length < 4 && Core.Tesera.humanize_type(parts[0])){
-                ret = {type: parts[0], id: parts[1]}
-            }
-
-            return ret  
-        },
-
-        parse_title: function(title){
-            // TODO: Быть может парсить аккуратнее
-            return title.split('|')[0].replace(/^ +| +$/g, '')
-
-        },
-
-        humanize_type: function(type){
-            return {
-                'message': "Сообщения",
-                'new': "Новости",
-                'article': "Статьи",
-                'journal': "Записи в дневниках",
-                'thought': "Мысли",
-                'thoughtus': "Мысли",
-                'game': "Игры",
-                'comment': "Комментарии",
-                'club': "Клубы",
-                'company': "Компании",
-                'persons': "Персоны",
-                'project': "Проекты",
-                'event': "События",
-                'video': "Видео",
-                'photo': "Фото"
-            }[type];
-        }
-    },
-
-    XHR: {
-        get: function(url, last_modified, success, error){
-            var xmlhttp = kango.xhr.getXMLHttpRequest(),
-                headersChecked = false;
-
-            xmlhttp.open('GET', url, true);
-            xmlhttp.setRequestHeader("If-Modified-Since", last_modified);
-            xmlhttp.onreadystatechange = function() {
-                if (!headersChecked && xmlhttp.readyState == 3) {
-                    var response_date = xmlhttp.getResponseHeader('Date') || 
-                                        xmlhttp.getResponseHeader('Last-Modified');
-                    Core.log('Page updated at ' + response_date);
-                    if(response_date){
-                        headersChecked = true;
-                        if(new Date(response_date) <= last_modified){
-                            Core.log('Skipping...');
-                            xmlhttp.abort();    
-                            if(error) error(304);
-                        }
-                    }
-                } else if (xmlhttp.readyState == 4){
-                    if(xmlhttp.status == 200){
-                        if(success) success(xmlhttp.responseText);
-                    } else {
-                        if(error) error(xmlhttp.status);
-                    }
-                }
-            };
-            xmlhttp.send(null);
-        }
-    },
-
 
     // TODO: ПодDRYить
     Parsers: {
@@ -144,10 +60,10 @@ var Core = {
                             Models.Events.add({
                                 'type': 'message',
                                 'day': message.date,
-                                'ids': message.id
+                                'uid': Models.Messages.get_uid(message)
                             })
                         );
-                        Background.update_badge();
+                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -187,7 +103,7 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'new'
                         });
-                        Background.update_badge();
+                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -227,7 +143,7 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'article'
                         });
-                        Background.update_badge();
+                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -268,7 +184,7 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': type
                         });
-                        Background.update_badge();
+                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -333,14 +249,14 @@ var Core = {
                             Models.Events.add({
                                 'type': 'comment',
                                 'id': comment.target.id,
-                                'ids': comment.id,
+                                'uid': Models.Comments.get_uid(comment),
                                 'day': comment.date,
                                 'target': comment.target
                             })
                         );
                         
 
-                        Background.update_badge();
+                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -445,7 +361,7 @@ var Core = {
                 if(job){
                     job.execute();
                 } else {
-                    Core.log("Pool is empty"); 
+                    Utils.log("Pool is empty"); 
                 }
             },
 
@@ -479,15 +395,15 @@ var Core = {
         Job.prototype = {
             'execute': function(){
                 var self = this;
-                Core.log("Start executing job " + this.type);
-                Core.XHR.get(this.url, this.last_update, function(text, xml){
+                Utils.log("Start executing job " + this.type);
+                Utils.async_lm_get(this.url, this.last_update, function(text, xml){
                     for(var i in self.parsers){
                         if(Core.Parsers[self.parsers[i]]){
                             Core.Parsers[self.parsers[i]](self, text);
                         }
                     }
 
-                    Core.log("Finished job " + self.type);
+                    Utils.log("Finished job " + self.type);
                     
                     if(self.period){
                         self.last_update = new Date();
@@ -499,7 +415,7 @@ var Core = {
                     } 
                 }, function(error){
                     self.returnToPool();
-                    Core.log("Error in job " + self.type + " code " + error);
+                    Utils.log("Error in job " + self.type + " code " + error);
                 });
             },
 
@@ -514,41 +430,5 @@ var Core = {
         }
 
         return Job;
-    })(),
-
-    'format_date': function(date, format){
-        var format = format || "%Y%M%D";
-        return format.replace(/%\w/g, function(param){
-            if(param == '%d'){ return date.getDate(); }
-            if(param == '%D'){ return (date.getDate()<10?'0':'')+date.getDate(); }
-            if(param == '%m'){ return date.getMonth()+1; }
-            if(param == '%M'){ return (date.getMonth()<10?'0':'')+(date.getMonth()+1); }
-            if(param == '%Y'){ return date.getFullYear(); }
-            if(param == '%h'){ return date.getHours(); }
-            if(param == '%H'){ return (date.getHours()<10?'0':'')+date.getHours(); }
-            if(param == '%j'){ return date.getMinutes(); }
-            if(param == '%J'){ return (date.getMinutes()<10?'0':'')+date.getMinutes(); }
-            if(param == '%s'){ return date.getSeconds(); }
-            if(param == '%S'){ return (date.getSeconds()<10?'0':'')+date.getSeconds(); }
-            if(param == '%%'){ return "%"; }
-        });
-    },
-
-    'strip_time': function(date){
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return date;
-    },
-
-    'log': function(msg, type){
-        if(!window.DEBUG) return;
-        var type = type || 'Notice';
-        if(!window.Background){
-            kango.invokeAsync('Core.log', msg, type);
-        }
-        kango.console.log(['[', this.format_date(new Date(), "%D.%M.%Y %H:%J:%S"), '] ', 
-                            type, ': ', msg].join(""));
-    }
-}
+    })()
+};

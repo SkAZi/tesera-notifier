@@ -65,7 +65,7 @@ var Models = {
         '_class': "log",
 
         'get_uid': function(params){
-            return Models.Common.get_uid(this._class, Core.format_date(params.day), 
+            return Models.Common.get_uid(this._class, Utils.format_date(params.day), 
                     params.type, params.target? params.target.id: null);
         },
 
@@ -82,15 +82,15 @@ var Models = {
                     "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
-                    "ids": [],
-                    "day": Core.strip_time(params.day),
+                    "related": [],
+                    "day": Utils.strip_time(params.day),
                     "type": params.type,
                     "count": 0,
                     "target": params.target || null
                 });
 
-            obj.ids.push(params.ids);
-            obj.count = obj.ids.length;
+            obj.related.push(params.uid);
+            obj.count = obj.related.length;
             return this.save(obj);
         },
 
@@ -104,16 +104,24 @@ var Models = {
                                 'target': target.target
                             }));
 
-                    if(!obj.uid) continue;
-
-                    if(obj.ids && obj.ids.length > 1 && obj.ids.indexOf(target.id) > -1){
-                        obj.ids.splice(obj.ids.indexOf(target.id), 1);
-                        obj.count--;
-                        this.save(obj);
-                    } else {
-                        kango.storage.removeItem(obj.uid);
+                    if(obj.uid){
+                        if(obj.related && obj.related.length > 1 && obj.related.indexOf(target.uid) > -1){
+                            obj.related.splice(obj.related.indexOf(target.uid), 1);
+                            obj.count--;
+                            this.save(obj);
+                        } else {
+                            kango.storage.removeItem(obj.uid);
+                        }
+                    }
+                } else if(targets[i].related){
+                    for(var j in targets[i].related){
+                        if(typeof targets[i].related[j] === 'string'){
+                            kango.storage.removeItem(targets[i].related[j]);
+                        }
                     }
                 }
+
+                kango.storage.removeItem(targets[i].uid);
             }
         },
 
@@ -163,7 +171,7 @@ var Models = {
         '_class': "comment",
 
         'get_uid': function(params){
-            return Models.Common.get_uid(this._class, Core.format_date(params.date, "%Y%M%D"),
+            return Models.Common.get_uid(this._class, Utils.format_date(params.date, "%Y%M%D"),
                     params.target.id, params.id);
         },
 
@@ -180,7 +188,7 @@ var Models = {
                     "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
-                    "date": params.date, //?
+                    "date": params.date || new Date(), //?
                     "target": params.target,
                     "from": params.from,
                     "title": params.title,
@@ -204,7 +212,7 @@ var Models = {
 
         'get_last': function(params){
             var params = (typeof params === "string" && params.indexOf('//tesera.ru/') > -1)?
-                     Core.Tesera.parse_url(params)
+                     Utils.parse_url(params)
                      : params,
                 id = this.get_uid(params),
                 obj = kango.storage.getItem(id);
@@ -213,7 +221,7 @@ var Models = {
 
         'set_last': function(params, last_post){
             var params = (typeof params === "string" && params.indexOf('//tesera.ru/') > -1)?
-                     Core.Tesera.parse_url(params)
+                     Utils.parse_url(params)
                      : params,
                 id = this.get_uid(params),
                 obj = kango.storage.getItem(id);
@@ -229,7 +237,7 @@ var Models = {
 
         'get': function(id, def){
             if(id.indexOf('//tesera.ru/') > -1){
-                id = this.get_uid(Core.Tesera.parse_url(id));
+                id = this.get_uid(Utils.parse_url(id));
             }
             return kango.storage.getItem(id) || def || {};
         },
@@ -239,7 +247,7 @@ var Models = {
         },
 
         'check': function(url){
-            var params = Core.Tesera.parse_url(url);
+            var params = Utils.parse_url(url);
             if(!params || !params.id){
                 return null;
             }
@@ -248,11 +256,11 @@ var Models = {
         },
 
         'change': function(data){
-            var params = Core.Tesera.parse_url(data.url), 
+            var params = Utils.parse_url(data.url), 
                 obj;
 
             if(!params || !params.id){
-                Core.log('Subscribe failed, unsupported url: ' + JSON.stringify(data));
+                Utils.log('Subscribe failed, unsupported url: ' + JSON.stringify(data));
                 return null;
             }
 
@@ -261,9 +269,9 @@ var Models = {
                 "uid": this.get_uid(params),
                 "id": params.id,
                 "sbtype": parseInt(data.sbtype),
-                "url": Core.Tesera.clean_url(data.url, true),
+                "url": Utils.clean_url(data.url, true),
                 "active": true,
-                "title": Core.Tesera.parse_title(data.title),
+                "title": Utils.parse_title(data.title),
                 "type": params.type,
                 "last_post": data.last_post || 0
             };
@@ -272,7 +280,7 @@ var Models = {
         },
 
         'delete': function(url){
-            var params = Core.Tesera.parse_url(url);
+            var params = Utils.parse_url(url);
             kango.storage.removeItem(this.get_uid(params));
         },
 

@@ -30,7 +30,7 @@ $(function(){
 
     var get_method, set_method, params, skip = true;
 
-    kango.invokeAsync('Core.Tesera.parse_url', location.href, function(params){
+    kango.invokeAsync('Utils.parse_url', location.href, function(params){
         if(!params.id){
             if(location.pathname == '/user/messages/'){
                 get_method = 'Models.Common.get_last';

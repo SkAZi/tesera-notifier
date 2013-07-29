@@ -1,12 +1,13 @@
 KangoAPI.onReady(function() {
     // TODO: попап с вопросом на удаление 
+    // TODO: фейдеры, залипающие заголовки и т.п.
 
     window.DEBUG = Models.Settings.get("debug");
 
     /* Views */
     var Views = {
         'switch_tab': function(){
-            Core.log("Switch tab fired.");
+            Utils.log("Switch tab fired.");
 
             $('#tabs li a').removeClass('active');
             $('#tabs-content > div').removeClass('active');
@@ -116,7 +117,7 @@ KangoAPI.onReady(function() {
 
             kango.browser.tabs.getCurrent(function(tab){
                 tab.dispatchMessage('subscribe', {
-                    'url': Core.Tesera.clean_url(tab.getUrl(), true),
+                    'url': Utils.clean_url(tab.getUrl(), true),
                     'title': tab.getTitle(),
                     'sbtype': parseInt($this.attr('data-sbtype'))           
                 });
@@ -126,16 +127,8 @@ KangoAPI.onReady(function() {
 
         'remove': function(){
             // TODO: Проблема с очисткой «Неделю назад» и подобных
-            var objects = $(this).attr('data-rel');
-
-            if(objects.indexOf('log:') != 0){
-                var items = Models.getItems(objects);
-                Models.Events.remove(items);
-            }
-
-            Models.deleteItems(objects);
-
-            kango.invokeAsync('Background.update_badge');
+            Models.Events.remove(Models.getItems($(this).attr('data-rel')));
+            kango.invokeAsync('Background.updateBadge');
             $('#tabs li a.active').click();
             return false;
         },
@@ -212,7 +205,7 @@ KangoAPI.onReady(function() {
             }
 
             $('#preload-pane').show();
-            kango.invokeAsync('Background.mass_subscribe', data, function(successfull){
+            kango.invokeAsync('Background.massSubscribe', data, function(successfull){
                 if(successfull){
                     Views.subscriptions(); 
                 } else {
@@ -251,12 +244,12 @@ KangoAPI.onReady(function() {
 
     /* Utils */
     nunjucks.env.addFilter('date', function(date, format) {
-        return format? moment(date).format(format):
-                       moment(date).startOf('day').calendar();
+        return format? Utils.format_date(new Date(date)):
+                       Utils.humanize_time(new Date(date));
     });
 
     nunjucks.env.addFilter('humanize_type', function(type) {
-        return Core.Tesera.humanize_type(type);
+        return Utils.humanize_type(type);
     });
 
     nunjucks.env.addFilter('pluralize', function(n, var1, var2, var3, no) {

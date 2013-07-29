@@ -1,6 +1,6 @@
 {
   "name": "Tesera Notifier",
-  "version": "2.0.1", 
+  "version": "2.0.14", 
   "description": "Tesera Notifier extension by nastolkus and SkAZi",
   "creator": "nastolkus, SkAZi", 
   
@@ -19,6 +19,7 @@
 
   "background_scripts": [
     "js/lib/zepto.js",
+    "js/utils.js",
     "js/core.js",
     "js/models.js",
     "js/background.js"

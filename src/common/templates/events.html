@@ -7,13 +7,13 @@
         {% if object.day|date != last_day %}
             <li class="day-header">
                 {{ object.day|date }}
-                <a href="#" class="remove" data-rel="log:{{ object.day|date("YYYYMMDD") }}*"></a>
+                <a href="#" class="remove" data-rel="log:{{ object.day|date("%Y%M%D") }}*"></a>
             </li>
         {% endif %}
         {% if object.type != last_type or object.day|date != last_day %}
             <li class="header">
                 {{ object.type|humanize_type }}
-                <a href="#" class="remove" data-rel="log:{{ object.day|date("YYYYMMDD") }}:{{ object.type }}*"></a>
+                <a href="#" class="remove" data-rel="log:{{ object.day|date("%Y%M%D") }}:{{ object.type }}*"></a>
             </li>
         {% endif %}
 

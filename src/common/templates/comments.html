@@ -4,16 +4,16 @@
     {% endif %}
 
     {% for object in object_list %}
-        {% if object.day|date != last_day %}
+        {% if object.date|date != last_day %}
             <li class="day-header">
-                {{ object.day|date }}
-                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDD") }}:*"></a>
+                {{ object.date|date }}
+                <a href="#" class="remove" data-rel="comment:{{ object.date|date("%Y%M%D") }}:*"></a>
             </li>
         {% endif %}
-        {% if object.target.id != last_target or object.day|date != last_day %}
+        {% if object.target.id != last_target or object.date|date != last_day %}
             <li class="header">
                 <a href="{{ object.target.url }}" class="open">{{ object.target.title }}</a>
-                <a href="#" class="remove" data-rel="comment:{{ object.day|date("YYYYMMDD") }}:{{ object.target.id }}*"></a>
+                <a href="#" class="remove" data-rel="comment:{{ object.date|date("%Y%M%D") }}:{{ object.target.id }}*"></a>
             </li>
         {% endif %}
 
@@ -30,7 +30,7 @@
             <a href="#" class="remove" data-rel="{{ object.uid }}"></a>
         </li>
 
-        {% set last_day = object.day|date %}
+        {% set last_day = object.date|date %}
         {% set last_target = object.target.id %}
     {% endfor %}
 </ul>
