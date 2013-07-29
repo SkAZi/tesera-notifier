@@ -50,6 +50,7 @@ body{
 
 a{
     color: #00a4ea;
+    outline: none;
 }
 
 a.local{
@@ -71,6 +72,7 @@ a.unseen:hover{
 }
 
 #preload-pane, #login-pane{
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -220,6 +222,13 @@ form button:active{
     background: -o-linear-gradient(top, #CCC 0%, #EEE 100%);
     background: -ms-linear-gradient(top, #CCC 0%, #EEE 100%);
     background: linear-gradient(top, #CCC 0%, #EEE21 100%);
+    vertical-align: middle;
+}
+
+form a.local{
+    font-size: 90%;
+    vertical-align: middle;
+    margin-left: 10px;
 }
 
 #main-pane{
@@ -243,6 +252,7 @@ form button:active{
     padding: 0 20px;
     color: #EEE;
     font-size: 90%;
+    overflow: hidden;
 }
 
 #toolbar span,
@@ -254,6 +264,11 @@ form button:active{
 #toolbar a.active{
     color: #fff;
     border: none;
+}
+
+#toolbar #login{
+    float: right;
+    margin-right: 0;
 }
 
 #tabs{

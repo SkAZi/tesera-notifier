@@ -154,6 +154,20 @@ KangoAPI.onReady(function() {
             return false;
         },
 
+
+        'show_login': function(){
+            if(Models.State.authorized){
+                $('#login').hide();
+                return false;
+            }
+
+            $('#login-pane').show();
+        },
+
+        'hide_login': function(){
+            $('#login-pane').hide();
+        },
+
         'check_auth': function(){
             kango.xhr.send({
                 'url': 'http://tesera.ru/',
@@ -169,10 +183,15 @@ KangoAPI.onReady(function() {
                 }
 
                 kango.dispatchMessage('syncState', {'State': Models.State});
-                $('#preload-pane').hide();
                 if(Models.State.authorized){
                     $('#login-pane').hide();
+                    $('#login').hide();
+                    $('a[href="#messages-tab"]').show();
+                } else {
+                    $('#login').show();
+                    $('a[href="#messages-tab"]').hide();
                 }
+                $('#preload-pane').hide();
             });
             return false;
         },
@@ -221,6 +240,8 @@ KangoAPI.onReady(function() {
 
     /* Routes */
     $('#toolbar').on('click', '.local', Views.subscribe);
+    $('#login-form').on('click', 'a.local', Views.hide_login);
+    $('#login').on('click', Views.show_login);
     $('#tabs').on('click', 'li a', Views.switch_tab);
 
     $('#tabs-content').on('click', '.list a.answer', Views.open_form);
@@ -275,12 +296,14 @@ KangoAPI.onReady(function() {
         if(data){
             Models.State = data;
 
-            if(!Models.State.authorized || 
-                new Date() - Models.State.authorized > 15*60*1000){
-                Views.check_auth();
+            if(Models.State.authorized && 
+                new Date() - Models.State.authorized <= 15*60*1000){
+                $('#login').hide();
+                $('a[href="#messages-tab"]').show();
             } else {
-                $('#preload-pane').hide();
-                $('#login-pane').hide();
+                Views.check_auth();
+                $('#login').show();
+                $('a[href="#messages-tab"]').hide();
             }
         } else {
             kango.invokeAsync('Background.syncState', Models.State);
