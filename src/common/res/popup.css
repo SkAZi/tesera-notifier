@@ -347,6 +347,8 @@ form a.local{
     position: relative;
     border-bottom: 1px solid #ccc;
     font-size: 90%;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 .list li.empty{

@@ -292,7 +292,6 @@ var Core = {
             this._pool = [];
         }
 
-        // TODO: можно добавлять и считать просроченные половинным делением
         Pool.prototype = {
             'addJob': function(job){
                 for(var i=this._pool.length;i--;){
@@ -356,10 +355,10 @@ var Core = {
                 return null;
             },
 
-            'executeNextJob': function(any){
+            'executeNextJob': function(any, extra_callback){
                 var job = this.nextJob(any);
                 if(job){
-                    job.execute();
+                    job.execute(extra_callback);
                 } else {
                     Utils.log("Pool is empty"); 
                 }
@@ -393,7 +392,7 @@ var Core = {
         }  
 
         Job.prototype = {
-            'execute': function(){
+            'execute': function(extra_callback){
                 var self = this;
                 Utils.log("Start executing job " + this.type);
                 Utils.async_lm_get(this.url, this.last_update, function(text, xml){
@@ -410,11 +409,11 @@ var Core = {
                         self.returnToPool();  
                     }
 
-                    if(self.callback){ 
-                        self.callback(); 
-                    } 
+                    if(self.callback) self.callback(); 
+                    if(extra_callback) extra_callback(); 
                 }, function(error){
                     self.returnToPool();
+                    if(extra_callback) extra_callback(); 
                     Utils.log("Error in job " + self.type + " code " + error);
                 });
             },

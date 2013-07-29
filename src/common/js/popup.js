@@ -168,6 +168,7 @@ KangoAPI.onReady(function() {
             $('#login-pane').hide();
         },
 
+        // TODO: убрать бесполезный запрос, делать что-то полезное при первой проверке
         'check_auth': function(){
             kango.xhr.send({
                 'url': 'http://tesera.ru/',
