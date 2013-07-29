@@ -33,7 +33,6 @@ var Utils = {
         return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)(\/)[^\/]*/, full? '$1$2$3': '$2');
     },
 
-    // TODO: Улучшить разбор url (?)
     parse_url: function(url){
         var ret = {type: "", id: 0};
         if(url.indexOf('//tesera.ru/') < 0){
@@ -55,7 +54,6 @@ var Utils = {
     parse_title: function(title){
         // TODO: Быть может парсить аккуратнее
         return title.split('|')[0].replace(/^ +| +$/g, '')
-
     },
 
     humanize_type: function(type){
@@ -109,11 +107,11 @@ var Utils = {
     },
 
     'humanize_time': function(date){
-        if(date > Utils.strip_time()){
+        if(date >= Utils.strip_time()){
             return 'сегодня';
-        } else if(date > Utils.strip_time(new Date(Date.now() - 24*60*60*1000))){
+        } else if(date >= Utils.strip_time(new Date(Date.now() - 24*60*60*1000))){
             return 'вчера';
-        } else if(date > Utils.strip_time(new Date(Date.now() - 48*60*60*1000))){
+        } else if(date >= Utils.strip_time(new Date(Date.now() - 48*60*60*1000))){
             return 'позавчера';
         }
         return Utils.format_date(date, "%D %U");

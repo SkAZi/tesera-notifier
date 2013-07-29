@@ -344,6 +344,14 @@ var Core = {
                 return count;
             },
 
+            'getDates': function(){
+                var dates = {};
+                for(var i in this._pool){
+                    dates[this._pool[i].type] = this._pool[i].last_update;
+                }
+                return dates;
+            },
+
             'nextJob': function(any){
                 if(any){
                     return this._pool.shift();
@@ -364,13 +372,6 @@ var Core = {
                 }
             },
 
-            'updateIntervals': function(){
-                var settings = Models.Settings.all();
-                for(var i in this._pool){
-                    this._pool[i].period = settings[this._pool[i].type+'_interval']*60*1000;
-                }
-            },
-
             'clear': function(){
                 this._pool = [];
             }
@@ -383,11 +384,11 @@ var Core = {
     Job: (function(){
         var Job = function(url, last_update, type, period, callback){
             this.url = url;
-            this.last_update = last_update;
             this.type = type;
-            this.date = new Date();
             this.parsers = ['auth', type];
+            this.last_update = last_update;
             this.period = period;
+            this.date = new Date(this.last_update.valueOf() + this.period);
             this.callback = callback || null;
         }  
 

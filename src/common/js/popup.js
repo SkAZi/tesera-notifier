@@ -40,7 +40,7 @@ KangoAPI.onReady(function() {
                 if(form.hasClass('post-comment')){
                     form.html(
                         nunjucks.env.render('form_'+$this.attr('data-rel')+'.html', { 
-                            object: kango.storage.getItem($this.attr('data-id'))
+                            object: Models.getItem($this.attr('data-id'))
                         })
                     );
                 }

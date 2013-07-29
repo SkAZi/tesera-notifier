@@ -1,4 +1,16 @@
 var Models = {
+    getItem: function(key, def){
+        return kango.storage.getItem(key) || def || null;
+    },
+
+    setItem: function(key, val){
+        try{
+            kango.storage.setItem(key, val);
+        } catch(e){
+            Utils.log('Can`t write to DB', 'Error');
+        }
+    },
+
     getKeys: function(mask, max, reversed){
         var regexp = new RegExp('^'+(mask || '*').replace(/\*/g, '.*').replace(/\?/g, '.')+'$'),
             ret = [], _keys = kango.storage.getKeys();
@@ -15,7 +27,7 @@ var Models = {
     getItems: function(mask, max, reversed){
         var ret = [], _keys = Models.getKeys(mask, max, reversed);
         for(var i in _keys){
-            ret.push(kango.storage.getItem(_keys[i]));
+            ret.push(Models.getItem(_keys[i]));
         }
         return ret;
     },
@@ -35,8 +47,10 @@ var Models = {
         'get_last': function(type){
             var type = typeof type == 'string'? type
                         : 'item:' + $.map(type, function(k,v){return k+'-'+v}).join(':');
-            return kango.storage.getItem('last:'+type) || {
-                'id': 0,
+
+            Utils.log('Get last type of last:'+type);
+            return Models.getItem('last:'+type) || {
+                'id': null,
                 'date': new Date(0)
             };
         },
@@ -44,13 +58,15 @@ var Models = {
         'set_last': function(type, id, date){
             var type = typeof type == 'string'? type
                         : 'item:' + $.map(type, function(k,v){return k+'-'+v}).join(':');
+
+            Utils.log('Set last type of last:'+type);
             if(typeof id === 'number'){
-                kango.storage.setItem('last:'+type, {
+                Models.setItem('last:'+type, {
                     'id': id,
                     'date': date || new Date()
                 });                 
             } else {
-                kango.storage.setItem('last:'+type, id);
+                Models.setItem('last:'+type, id);
             }
         },
 
@@ -70,7 +86,7 @@ var Models = {
         },
 
         'get': function(id, def){
-            return kango.storage.getItem(id) || def || {};
+            return Models.getItem(id) || def || {};
         },
 
         'list': function(){
@@ -126,7 +142,7 @@ var Models = {
         },
 
         'save': function(obj){
-            kango.storage.setItem(obj.uid, obj);
+            Models.setItem(obj.uid, obj);
             return obj;
         }
 
@@ -162,7 +178,7 @@ var Models = {
         },
 
         'save': function(obj){
-            kango.storage.setItem(obj.uid, obj);
+            Models.setItem(obj.uid, obj);
             return obj;
         }
     },
@@ -198,7 +214,7 @@ var Models = {
         },
 
         'save': function(obj){
-            kango.storage.setItem(obj.uid, obj);
+            Models.setItem(obj.uid, obj);
             return obj;
         }
     },
@@ -215,23 +231,25 @@ var Models = {
                      Utils.parse_url(params)
                      : params,
                 id = this.get_uid(params),
-                obj = kango.storage.getItem(id);
-            return obj? obj.last_post: Models.Common.get_last(params);
+                obj = Models.getItem(id);
+            return obj? {'id':obj.last_post, 'date':obj.last_date}
+                      : Models.Common.get_last(params);
         },
 
-        'set_last': function(params, last_post){
+        'set_last': function(params, last_post, date){
             var params = (typeof params === "string" && params.indexOf('//tesera.ru/') > -1)?
                      Utils.parse_url(params)
                      : params,
                 id = this.get_uid(params),
-                obj = kango.storage.getItem(id);
+                obj = Models.getItem(id);
             
             if(obj){
                 obj.last_post = last_post;
+                obj.last_date = date || new Date();
                 return this.save(obj);
             } else if(params.id && params.type){
                 Models.Common.set_last(params, 
-                    {'id': last_post, 'date': new Date()});
+                    {'id': last_post, 'date': date || new Date()});
             }
         },
 
@@ -239,7 +257,7 @@ var Models = {
             if(id.indexOf('//tesera.ru/') > -1){
                 id = this.get_uid(Utils.parse_url(id));
             }
-            return kango.storage.getItem(id) || def || {};
+            return Models.getItem(id) || def || {};
         },
 
         'list': function(){
@@ -273,7 +291,8 @@ var Models = {
                 "active": true,
                 "title": Utils.parse_title(data.title),
                 "type": params.type,
-                "last_post": data.last_post || 0
+                "last_post": data.last_post || 0,
+                "last_date": data.last_date || new Date()
             };
 
             return this.save(obj);
@@ -285,7 +304,7 @@ var Models = {
         },
 
         'save': function(obj){
-            kango.storage.setItem(obj.uid, obj);
+            Models.setItem(obj.uid, obj);
             return obj;
         }
     },
@@ -320,22 +339,24 @@ var Models = {
         },
 
         all: function(){
-            return kango.storage.getItem('settings') || this.defaults;
+            return Models.getItem('settings') || this.defaults;
         },
 
         set: function(key, val){
             var settings = this.all();
             settings[key] = val;
-            kango.storage.setItem('settings', settings);
+            Models.setItem('settings', settings);
         },
 
         get: function(key){
             var settings = this.all();
-            return settings && settings[key] || this.defaults[key] || null;
+            return (settings && typeof settings[key] != 'undefined')?
+                        settings[key]
+                        : this.defaults[key] || null;
         },
 
         reset: function(){
-            kango.storage.setItem('settings', this.defaults);
+            Models.setItem('settings', this.defaults);
         },
 
         traffic: function(){

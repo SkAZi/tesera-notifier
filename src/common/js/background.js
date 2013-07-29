@@ -1,13 +1,13 @@
 var Background = {
     _interval: null,
+    _cleanup_interval: null,
 
     init: function(){
         window.DEBUG = Models.Settings.get("debug", true);
         kango.ui.browserButton.setBadgeBackgroundColor([225, 127, 22, 255]);
 
-        this.updateWorld();
-        this.updateInterval();
         this.updateBadge();
+        this.updateInterval();
     },
 
     'syncState': function(data){
@@ -20,42 +20,28 @@ var Background = {
     },
 
     updateInterval: function(){
+        this.updateWorld();
         if(this._interval) clearInterval(this._interval);
         this._interval = setInterval(this.update, Models.Settings.get("interval")*1000);
-        Core.Pool.updateIntervals();
+        if(this._cleanup_interval) clearInterval(this._cleanup_interval);
+        this._cleanup_interval = setInterval(this.cleanup, 4*3600*1000);
     },
 
     updateWorld: function(){
-        Core.Pool.addJob(new Core.Job(
-            'http://tesera.ru/comments/',
-            Models.Common.get_last('comments').date,
-            'comments',
-            Models.Settings.get("comments_interval")*60*1000
-        ));  
-        Core.Pool.addJob(new Core.Job(
-            'http://tesera.ru/user/messages/',
-            Models.Common.get_last('messages').date,
-            'messages',
-            Models.Settings.get("messages_interval")*60*1000
-        ));
-        Core.Pool.addJob(new Core.Job(
-            'http://tesera.ru/articles/',
-            Models.Common.get_last('articles').date,
-            'articles',
-            Models.Settings.get("articles_interval")*60*1000
-        ));
-        Core.Pool.addJob(new Core.Job(
-            'http://tesera.ru/diaries/',
-            Models.Common.get_last('diaries').date,
-            'diaries',
-            Models.Settings.get("diaries_interval")*60*1000
-        ));
-        Core.Pool.addJob(new Core.Job(
-            'http://tesera.ru/news/',
-            Models.Common.get_last('news').date,
-            'news',
-            Models.Settings.get("news_interval")*60*1000
-        ));
+        var job_types = ['comments', 'messages', 'articles', 'diaries', 'news'],
+            previous_dates = Core.Pool.getDates();
+
+        Core.Pool.clear();
+        for(var i in job_types){
+            if(Models.Settings.get(job_types[i] + '_interval')){
+                Core.Pool.addJob(new Core.Job(
+                    'http://tesera.ru/'+ job_types[i] +'/',
+                    previous_dates[job_types[i]] || new Date(Models.Common.get_last(job_types[i]).date),
+                    job_types[i],
+                    Models.Settings.get(job_types[i] + '_interval')*60*1000
+                ));
+            }
+        }
 
         /* TODO: resort
         Core.Pool.addJob(new Core.Job(
@@ -64,8 +50,6 @@ var Background = {
             'games',
             60*60*1000
         )); */
-
-        setInterval(this.cleanup, 4*3600*1000);
     },
 
     update: function(){
@@ -74,14 +58,21 @@ var Background = {
     },
 
     updateBadge: function(){
-        var count = Models.getKeys('log:*').length;
+        var count = 0,
+            events = Models.getItems('log:*');
+        for(var i in events){
+            count += events[i].count;
+            if(count >= 100) break;
+        }
         kango.ui.browserButton.setBadgeValue(count<100? count: '99+');
     },
 
     cleanup: function(){
         var keys,
             types = ['message', 'comment', 'log', 'last:item:'],
-            cleanup_count = Models.Settings.get("cleanup");
+            cleanup_count = Models.Settings.get("cleanup"),
+            subscriptions = Models.getItems('subscription:*'),
+            unactive_date = Date.now() - 31*24*60*60*1000;
 
         if(!cleanup_count) return;
         for(var i in types){

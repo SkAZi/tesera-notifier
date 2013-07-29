@@ -46,15 +46,15 @@ $(function(){
 
         if(skip) return;
 
-        kango.invokeAsync(get_method, params, function(last_id){
-            if(last_id === null) return;
+        kango.invokeAsync(get_method, params, function(last){
+            if(last.id === null) return;
 
-            var last_post = last_id;
+            var last_post = last.id;
             $('.item .user').each(function(){
                 var $this = $(this), 
                     post_id = parseInt($this.attr("forid"));
 
-                if(post_id > last_id){
+                if(post_id > last.id){
                     $this.closest('.item').addClass('new-item');
                 }
 
@@ -63,7 +63,7 @@ $(function(){
                 }
             });
 
-            kango.invokeAsync(set_method, params, last_post);
+            kango.invokeAsync(set_method, params, last_post, new Date());
         });
     });
 });

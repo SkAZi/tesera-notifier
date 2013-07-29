@@ -255,6 +255,10 @@ form a.local{
     overflow: hidden;
 }
 
+#toolbar a{
+    color: #14b8ff;
+}
+
 #toolbar span,
 #toolbar a{
     display: inline-block;
@@ -264,6 +268,7 @@ form a.local{
 #toolbar a.active{
     color: #fff;
     border: none;
+    display: none;
 }
 
 #toolbar #login{
@@ -455,7 +460,7 @@ form.settings span{
 
 form.settings select{
     vertical-align: middle;
-    font-size: 130%;
+    font-size: 17px;
     width: 120px;
 }
 
