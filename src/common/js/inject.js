@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name TeseraTweaks
 // @include http://tesera.ru/*
-// @include https://tesera.ru/*
 // @require js/lib/zepto.js
 // ==/UserScript==
 

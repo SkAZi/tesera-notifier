@@ -168,7 +168,7 @@ var Models = {
                     "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
-                    "date": params.date, //?
+                    "day": params.day || new Date(), //?
                     "unread": true,
                     "from": params.from,
                     "title": params.title,
@@ -187,7 +187,7 @@ var Models = {
         '_class': "comment",
 
         'get_uid': function(params){
-            return Models.Common.get_uid(this._class, Utils.format_date(params.date, "%Y%M%D"),
+            return Models.Common.get_uid(this._class, Utils.format_date(params.day, "%Y%M%D"),
                     params.target.id, params.id);
         },
 
@@ -204,7 +204,7 @@ var Models = {
                     "class": this._class,
                     "uid": this.get_uid(params),
                     "id": params.id,
-                    "date": params.date || new Date(), //?
+                    "day": params.day || new Date(),
                     "target": params.target,
                     "from": params.from,
                     "title": params.title,

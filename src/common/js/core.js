@@ -47,7 +47,7 @@ var Core = {
                             title = $this.find('b.title'),
                             message = {
                                 'id': id,
-                                'date': new Date(), // TODO: Вычислять реальную дату
+                                'day': new Date(), // TODO: Вычислять реальную дату
                                 'from': {
                                     'id': parseInt($this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
                                     'name': name.length? name.text(): null
@@ -59,11 +59,10 @@ var Core = {
                         Models.Messages.add(message,
                             Models.Events.add({
                                 'type': 'message',
-                                'day': message.date,
+                                'day': message.day,
                                 'uid': Models.Messages.get_uid(message)
                             })
                         );
-                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -77,6 +76,7 @@ var Core = {
                 last_id = parseInt(items.eq(0).find('.user').attr('forid'));
             }
 
+            Background.updateBadge();
             return callback();
         },
 
@@ -103,7 +103,6 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'new'
                         });
-                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -117,6 +116,7 @@ var Core = {
                 last_id = parseInt(items.eq(0).find('h3 a').attr('href').replace('/new/', ''));
             }
 
+            Background.updateBadge();
             return callback();
         },
 
@@ -143,7 +143,6 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': 'article'
                         });
-                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -157,6 +156,7 @@ var Core = {
                 last_id = parseInt(items.eq(0).find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
             }
 
+            Background.updateBadge();
             return callback();
         },
 
@@ -184,7 +184,6 @@ var Core = {
                             'day': new Date(), // TODO: Вычислять реальную дату
                             'type': type
                         });
-                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -198,6 +197,7 @@ var Core = {
                 last_id = parseInt(items.eq(0).find('.game-about a').attr('href').split('/')[4] || 0);
             }
 
+            Background.updateBadge();
             return callback();
         },
 
@@ -230,7 +230,7 @@ var Core = {
 
                         comment = {
                             'id': id,
-                            'date': new Date(), // TODO: Вычислять реальную дату
+                            'day': new Date(), // TODO: Вычислять реальную дату
                             'from': {
                                 'id': parseInt($this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
                                 'name': name.length? name.text(): null
@@ -250,13 +250,10 @@ var Core = {
                                 'type': 'comment',
                                 'id': comment.target.id,
                                 'uid': Models.Comments.get_uid(comment),
-                                'day': comment.date,
+                                'day': comment.day,
                                 'target': comment.target
                             })
                         );
-                        
-
-                        Background.updateBadge();
                     }
 
                     if(id > last_id) last_id = id;
@@ -270,6 +267,7 @@ var Core = {
                 last_id = parseInt(items.eq(0).find('.user').attr('forid'));
             }
 
+            Background.updateBadge();
             return callback();
         },
 
@@ -386,7 +384,7 @@ var Core = {
             this.url = url;
             this.type = type;
             this.parsers = ['auth', type];
-            this.last_update = last_update;
+            this.last_update = last_update || new Date();
             this.period = period;
             this.date = new Date(this.last_update.valueOf() + this.period);
             this.callback = callback || null;
@@ -420,7 +418,7 @@ var Core = {
             },
 
             'returnToPool': function(){
-                this.date = new Date(this.date.valueOf() + this.period);
+                this.date = new Date(this.last_update.valueOf() + this.period);
                 Core.Pool.addJob(this);
             },
 

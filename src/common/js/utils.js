@@ -98,7 +98,7 @@ var Utils = {
     },
 
     'strip_time': function(date){
-        var date = date || new Date();
+        var date = new Date(date);
         date.setHours(0);
         date.setMinutes(0);
         date.setSeconds(0);
@@ -109,9 +109,9 @@ var Utils = {
     'humanize_time': function(date){
         if(date >= Utils.strip_time()){
             return 'сегодня';
-        } else if(date >= Utils.strip_time(new Date(Date.now() - 24*60*60*1000))){
+        } else if(date >= Utils.strip_time(Date.now() - 24*60*60*1000)){
             return 'вчера';
-        } else if(date >= Utils.strip_time(new Date(Date.now() - 48*60*60*1000))){
+        } else if(date >= Utils.strip_time(Date.now() - 48*60*60*1000)){
             return 'позавчера';
         }
         return Utils.format_date(date, "%D %U");

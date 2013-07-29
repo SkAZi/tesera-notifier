@@ -266,8 +266,9 @@ KangoAPI.onReady(function() {
 
     /* Utils */
     nunjucks.env.addFilter('date', function(date, format) {
+        Utils.log(date);
         return format? Utils.format_date(new Date(date)):
-                       Utils.humanize_time(new Date(date));
+                       Utils.humanize_time(Utils.strip_time(new Date(date)));
     });
 
     nunjucks.env.addFilter('humanize_type', function(type) {
