@@ -111,14 +111,11 @@ var Models = {
         },
 
         'remove': function(targets){
+            Utils.log(JSON.stringify(targets));
             for(var i in targets){
                 if(targets[i].event){
                     var target = targets[i],
-                        obj = this.get(this.get_uid({
-                                'day': new Date(target.date),
-                                'type': target['class'],
-                                'target': target.target
-                            }));
+                        obj = this.get(target.event);
 
                     if(obj.uid){
                         if(obj.related && obj.related.length > 1 && obj.related.indexOf(target.uid) > -1){
@@ -267,7 +264,7 @@ var Models = {
         'check': function(url){
             var params = Utils.parse_url(url);
             if(!params || !params.id){
-                return null;
+                return -1;
             }
             item = kango.storage.getItem(this.get_uid(params));
             return item? item.sbtype: 0;

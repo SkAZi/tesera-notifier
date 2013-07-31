@@ -28,7 +28,7 @@ var Background = {
     },
 
     updateWorld: function(){
-        var job_types = ['comments', 'messages', 'articles', 'diaries', 'news'],
+        var job_types = ['comments', 'articles', 'diaries', 'news'],
             previous_dates = Core.Pool.getDates();
 
         Core.Pool.clear();
@@ -41,6 +41,15 @@ var Background = {
                     Models.Settings.get(job_types[i] + '_interval')*60*1000
                 ));
             }
+        }
+
+        if(Models.Settings.get('messages_interval')){
+            Core.Pool.addJob(new Core.Job(
+                'http://tesera.ru/user/messages/',
+                previous_dates['messages'] || new Date(Models.Common.get_last('messages').date),
+                'messages',
+                Models.Settings.get('messages_interval')*60*1000
+            ));
         }
 
         /* TODO: resort
@@ -101,7 +110,7 @@ var Background = {
                 'url': data[i].url,
                 'title': data[i].topic || data[i].title,
                 'sbtype': data[i].sbtype || 2,
-                'last_comment': data[i].lastnum || data[i].last_comment
+                'last_comment': data[i].lastnum || data[i].last_post
             });
         }
         return true;

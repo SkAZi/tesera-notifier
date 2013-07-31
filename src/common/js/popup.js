@@ -126,7 +126,6 @@ KangoAPI.onReady(function() {
         },
 
         'remove': function(){
-            // TODO: Проблема с очисткой «Неделю назад» и подобных
             Models.Events.remove(Models.getItems($(this).attr('data-rel')));
             kango.invokeAsync('Background.updateBadge');
             $('#tabs li a.active').click();
@@ -162,6 +161,7 @@ KangoAPI.onReady(function() {
             }
 
             $('#login-pane').show();
+            return false;
         },
 
         'hide_login': function(){
@@ -285,12 +285,12 @@ KangoAPI.onReady(function() {
     /* Run!!! */
     kango.browser.tabs.getCurrent(function(tab){
         var subscribe = Models.Subscriptions.check(tab.getUrl());
-        if(subscribe === null){
+        if(subscribe == -1){
             $('#toolbar > .wrapper').hide();
         } else {
             $('#toolbar > .wrapper').show();
             $('#toolbar .local').removeClass('active');
-            $('#toolbar .local').eq(parseInt(subscribe)).addClass('active');
+            $('#toolbar .local[data-sbtype="'+subscribe+'"]').addClass('active');
         }
     });
 
