@@ -6,8 +6,15 @@ var Background = {
         window.DEBUG = Models.Settings.get("debug", true);
         kango.ui.browserButton.setBadgeBackgroundColor([225, 127, 22, 255]);
 
+        this.checkAuth();
         this.updateBadge();
         this.updateInterval();
+    },
+
+    'checkAuth': function(){
+        new Core.Job('http://tesera.ru/', new Date(), 'auth', 0).execute(function(){
+            kango.dispatchMessage('syncState', Models.State);
+        });
     },
 
     'syncState': function(data){
@@ -95,7 +102,7 @@ var Background = {
     },
 
     subscribe: function(data){
-        if(data.sbtype !== null){
+        if(data.sbtype){
             Models.Subscriptions.change(data);
             Utils.log("Subscribed: " + JSON.stringify(data));
         } else {

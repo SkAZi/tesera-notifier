@@ -22,6 +22,10 @@ KangoAPI.onReady(function() {
             if(view && Views[view]){
                 Views[view]();
             }
+
+            Models.State.tab = $(this).attr('data-tab');
+            kango.invokeAsync('Background.syncState', Models.State);
+
             return false;
         },
 
@@ -168,33 +172,20 @@ KangoAPI.onReady(function() {
             $('#login-pane').hide();
         },
 
-        // TODO: убрать бесполезный запрос, делать что-то полезное при первой проверке
         'check_auth': function(){
-            kango.xhr.send({
-                'url': 'http://tesera.ru/',
-                'method': 'GET',
-                'async': true
-            }, function(result){
-                Models.State.authorized = ((result.response.indexOf('id="open-authorize"') == -1))? 
-                                        new Date(): 
-                                        false;
-
-                if(Models.State.authorized){
-                    Models.State.user = (result.response.match(/<a href="\/user\/" class="name"><span>([^<]*)<\/span>/) || [])[1] || null;
-                }
-
-                kango.dispatchMessage('syncState', {'State': Models.State});
-                if(Models.State.authorized){
-                    $('#login-pane').hide();
-                    $('#login').hide();
-                    $('a[href="#messages-tab"]').show();
-                } else {
-                    $('#login').show();
-                    $('a[href="#messages-tab"]').hide();
-                }
-                $('#preload-pane').hide();
-            });
+            kango.invokeAsync('Background.checkAuth');
             return false;
+        },
+
+        'setup_auth': function(){
+            if(Models.State.authorized){
+                $('#login-pane').hide();
+                $('#login').hide();
+                $('a[href="#messages-tab"]').show();
+            } else {
+                $('#login').show();
+                $('a[href="#messages-tab"]').hide();
+            }            
         },
 
         'post_comment': function(){
@@ -261,7 +252,12 @@ KangoAPI.onReady(function() {
     $('#tabs-content').on('submit', 'form.post-comment', 
                                      Views.post_comment);
 
+
     /* Events */
+    kango.addMessageListener('syncState', function(event) {
+        Models.State = event.data;
+        Views.setup_auth();
+    });
 
 
     /* Utils */
@@ -295,21 +291,13 @@ KangoAPI.onReady(function() {
     });
 
     kango.invokeAsync('Background.syncState', null, function(data){
-        if(data){
-            Models.State = data;
-
-            if(Models.State.authorized && 
-                new Date() - Models.State.authorized <= 15*60*1000){
-                $('#login').hide();
-                $('a[href="#messages-tab"]').show();
-            } else {
-                Views.check_auth();
-                $('#login').show();
-                $('a[href="#messages-tab"]').hide();
-            }
-        } else {
-            kango.invokeAsync('Background.syncState', Models.State);
+        Models.State = data;
+        if(!Models.State.authorized || new Date() - Models.State.authorized <= 15*60*1000){
+            Views.check_auth();
         }
+
+        Views.setup_auth();
+
+        $('#tabs li:nth-of-type('+ (Models.State.tab || 1)+') a').click();
     });
-    $('#tabs li:first-of-type a').click();
 });

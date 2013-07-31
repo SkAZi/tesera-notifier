@@ -308,7 +308,8 @@ var Models = {
 
     State: {
         'authorized': null,
-        'user': null
+        'user': null,
+        'tab': 1
     },
 
     Settings: {
