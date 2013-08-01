@@ -6,13 +6,34 @@ var Background = {
         window.DEBUG = Models.Settings.get("debug", true);
         kango.ui.browserButton.setBadgeBackgroundColor([225, 127, 22, 255]);
 
+        kango.browser.addEventListener(kango.browser.event.TAB_CHANGED, this.setIcon);
+        kango.browser.addEventListener(kango.browser.event.TAB_CREATED, this.setIcon);
+        kango.browser.addEventListener(kango.browser.event.DOCUMENT_COMPLETE, this.setIcon);
+        kango.browser.addEventListener(kango.browser.event.BEFORE_NAVIGATE, this.search);
+
+        this.setIcon();
         this.checkAuth();
         this.updateBadge();
         this.updateInterval();
     },
 
+    'search': function(event){
+        
+        
+    },
+
+    'setIcon': function(event){
+        if(!event) return;
+        var state = Models.Subscriptions.check(event.url);
+        if(state < 1){
+            kango.ui.browserButton.setIcon("icons/button.png");
+        } else {
+            kango.ui.browserButton.setIcon("icons/button-s.png");
+        }
+    },
+
     'checkAuth': function(){
-        new Core.Job('http://tesera.ru/', new Date(), 'auth', 0).execute(function(){
+        new Core.Job('http://tesera.ru/', 'auth', new Date(0), 0, ['auth']).execute(function(){
             kango.dispatchMessage('syncState', Models.State);
         });
     },
@@ -35,28 +56,25 @@ var Background = {
     },
 
     updateWorld: function(){
-        var job_types = ['comments', 'articles', 'diaries', 'news'],
+        var job_types = {
+                'comments': 'http://tesera.ru/comments/', 
+                'messages': 'http://tesera.ru/user/messages/', 
+                'articles': 'http://tesera.ru/articles/', 
+                'diaries': 'http://tesera.ru/diaries/', 
+                'news': 'http://tesera.ru/news/'
+            },
             previous_dates = Core.Pool.getDates();
 
         Core.Pool.clear();
-        for(var i in job_types){
-            if(Models.Settings.get(job_types[i] + '_interval')){
+        for(var type in job_types){
+            if(Models.Settings.get(type + '_interval')){
                 Core.Pool.addJob(new Core.Job(
-                    'http://tesera.ru/'+ job_types[i] +'/',
-                    previous_dates[job_types[i]] || new Date(Models.Common.get_last(job_types[i]).date),
-                    job_types[i],
-                    Models.Settings.get(job_types[i] + '_interval')*60*1000
+                    job_types[type],
+                    type,
+                    previous_dates[type] || new Date(Models.Common.get_last(type).date),
+                    Models.Settings.get(type + '_interval')*60*1000
                 ));
             }
-        }
-
-        if(Models.Settings.get('messages_interval')){
-            Core.Pool.addJob(new Core.Job(
-                'http://tesera.ru/user/messages/',
-                previous_dates['messages'] || new Date(Models.Common.get_last('messages').date),
-                'messages',
-                Models.Settings.get('messages_interval')*60*1000
-            ));
         }
 
         /* TODO: resort
@@ -109,6 +127,7 @@ var Background = {
             Models.Subscriptions.delete(data.url);
             Utils.log("Unsubscribed: " + JSON.stringify(data));
         }
+        this.setIcon({'url': data.url});
     },
 
     massSubscribe: function(data){

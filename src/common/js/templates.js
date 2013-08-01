@@ -21,7 +21,7 @@ if(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)) != runt
 output += "\n            <li class=\"day-header\">\n                ";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)), env.autoesc);
 output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"comment:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"%Y%M%D"), env.autoesc);
 output += ":*\"></a>\n            </li>\n        ";
 }
 output += "\n        ";
@@ -31,7 +31,7 @@ output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3)
 output += "\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"title", env.autoesc), env.autoesc);
 output += "</a>\n                <a href=\"#\" class=\"remove\" data-rel=\"comment:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"%Y%M%D"), env.autoesc);
 output += ":";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"id", env.autoesc), env.autoesc);
 output += "*\"></a>\n            </li>\n        ";
@@ -112,12 +112,13 @@ var t_2 = runtime.contextOrFrameLookup(context, frame, "object_list");
 if(t_2 !== undefined) {for(var t_1=0; t_1 < t_2.length; t_1++) {
 var t_3 = t_2[t_1];
 frame.set("object", t_3);
+frame.set("loop.last", t_1 === t_2.length - 1);
 output += "\n        ";
 if(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)) != runtime.contextOrFrameLookup(context, frame, "last_day")) {
 output += "\n            <li class=\"day-header\">\n                ";
 output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)), env.autoesc);
 output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"log:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"%Y%M%D"), env.autoesc);
 output += "*\"></a>\n            </li>\n        ";
 }
 output += "\n        ";
@@ -125,7 +126,7 @@ if(runtime.memberLookup((t_3),"type", env.autoesc) != runtime.contextOrFrameLook
 output += "\n            <li class=\"header\">\n                ";
 output += runtime.suppressValue(env.getFilter("humanize_type")(runtime.memberLookup((t_3),"type", env.autoesc)), env.autoesc);
 output += "\n                <a href=\"#\" class=\"remove\" data-rel=\"log:";
-output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"YYYYMMDD"), env.autoesc);
+output += runtime.suppressValue(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc),"%Y%M%D"), env.autoesc);
 output += ":";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"type", env.autoesc), env.autoesc);
 output += "*\"></a>\n            </li>\n        ";
@@ -136,7 +137,20 @@ output += "\n            У вас <a href=\"http://tesera.ru/user/messages/\" d
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "\" class=\"open delete\">";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"новое сообщение","новых сообщения","новых сообщений"), env.autoesc);
-output += "</a>\n        ";
+output += "</a> от ";
+frame = frame.push();
+var t_5 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_5 !== undefined) {for(var t_4=0; t_4 < t_5.length; t_4++) {
+var t_6 = t_5[t_4];
+frame.set("uid", t_6);
+frame.set("loop.last", t_4 === t_5.length - 1);
+output += runtime.suppressValue(env.getFilter("get_item_key")(t_6,"from.name"), env.autoesc);
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += ", ";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "comment") {
@@ -144,6 +158,8 @@ output += "\n            ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"новый комментарий","новых комментария","новых комментариев"), env.autoesc);
 output += " к «<a href=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"url", env.autoesc), env.autoesc);
+output += "#post";
+output += runtime.suppressValue(env.getFilter("get_item_key")(runtime.memberLookup((runtime.memberLookup((t_3),"related", env.autoesc)),0, env.autoesc),"id"), env.autoesc);
 output += "\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "\" class=\"open delete\">";
@@ -154,51 +170,142 @@ else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "article") {
 output += "\n            На сайте ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"появилась","появилось","появилось",true), env.autoesc);
-output += " <a href=\"http://tesera.ru/articles/\" data-rel=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
-output += "\" class=\"open delete\">";
+output += " ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"статья","статьи","статей"), env.autoesc);
-output += "</a>\n        ";
+output += ": ";
+frame = frame.push();
+var t_8 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_8 !== undefined) {for(var t_7=0; t_7 < t_8.length; t_7++) {
+var t_9 = t_8[t_7];
+frame.set("related", t_9);
+frame.set("loop.last", t_7 === t_8.length - 1);
+output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_9),"url", env.autoesc), env.autoesc);
+output += "\" data-rel=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
+output += "|";
+output += runtime.suppressValue(runtime.memberLookup((t_9),"url", env.autoesc), env.autoesc);
+output += "\" class=\"open delete\">";
+output += runtime.suppressValue(runtime.memberLookup((t_9),"title", env.autoesc), env.autoesc);
+output += "</a>»";
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += ", ";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "new") {
 output += "\n            На сайте ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"появилась","появилось","появилось",true), env.autoesc);
-output += " <a href=\"http://tesera.ru/news/\" data-rel=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
-output += "\" class=\"open delete\">";
+output += " ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"новость","новости","новостей"), env.autoesc);
-output += "</a>\n        ";
+output += ": ";
+frame = frame.push();
+var t_11 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_11 !== undefined) {for(var t_10=0; t_10 < t_11.length; t_10++) {
+var t_12 = t_11[t_10];
+frame.set("related", t_12);
+frame.set("loop.last", t_10 === t_11.length - 1);
+output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_12),"url", env.autoesc), env.autoesc);
+output += "\" data-rel=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
+output += "|";
+output += runtime.suppressValue(runtime.memberLookup((t_12),"url", env.autoesc), env.autoesc);
+output += "\" class=\"open delete\">";
+output += runtime.suppressValue(runtime.memberLookup((t_12),"title", env.autoesc), env.autoesc);
+output += "</a>»";
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += ", ";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "journal") {
 output += "\n            На сайте ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"появилась","появилось","появилось",true), env.autoesc);
-output += " <a href=\"http://tesera.ru/diaries/journal/\" data-rel=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
-output += "\" class=\"open delete\">";
+output += " ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"запись в дневнике","записи в дневниках","записей в дневниках"), env.autoesc);
-output += "</a>\n        ";
+output += ": ";
+frame = frame.push();
+var t_14 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_14 !== undefined) {for(var t_13=0; t_13 < t_14.length; t_13++) {
+var t_15 = t_14[t_13];
+frame.set("related", t_15);
+frame.set("loop.last", t_13 === t_14.length - 1);
+output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
+output += "|";
+output += runtime.suppressValue(runtime.memberLookup((t_15),"url", env.autoesc), env.autoesc);
+output += "\">";
+output += runtime.suppressValue(runtime.memberLookup((t_15),"title", env.autoesc), env.autoesc);
+output += "</a>»";
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += " ,";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "thoughtus") {
 output += "\n            На сайте ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"появилась","появилось","появилось",true), env.autoesc);
-output += " <a href=\"http://tesera.ru/diaries/thoughtus/\" data-rel=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
-output += "\" class=\"open delete\">";
+output += " ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"мысль","мысли","мыслей"), env.autoesc);
-output += "</a>\n        ";
+output += ": ";
+frame = frame.push();
+var t_17 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_17 !== undefined) {for(var t_16=0; t_16 < t_17.length; t_16++) {
+var t_18 = t_17[t_16];
+frame.set("related", t_18);
+frame.set("loop.last", t_16 === t_17.length - 1);
+output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_18),"url", env.autoesc), env.autoesc);
+output += "\" data-rel=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
+output += "|";
+output += runtime.suppressValue(runtime.memberLookup((t_18),"url", env.autoesc), env.autoesc);
+output += "\" class=\"open delete\">";
+output += runtime.suppressValue(runtime.memberLookup((t_18),"title", env.autoesc), env.autoesc);
+output += "</a>»";
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += " ,";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 else {
 if(runtime.memberLookup((t_3),"type", env.autoesc) == "game") {
 output += "\n            На сайте ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"появилась","появилось","появилось",true), env.autoesc);
-output += " <a href=\"http://tesera.ru/games/\" data-rel=\"";
-output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
-output += "\" class=\"open delete\">";
+output += " ";
 output += runtime.suppressValue(env.getFilter("pluralize")(runtime.memberLookup((t_3),"count", env.autoesc),"новая игра","новых игры","новых игр"), env.autoesc);
-output += "</a>\n        ";
+output += ": ";
+frame = frame.push();
+var t_20 = runtime.memberLookup((t_3),"related", env.autoesc);
+if(t_20 !== undefined) {for(var t_19=0; t_19 < t_20.length; t_19++) {
+var t_21 = t_20[t_19];
+frame.set("related", t_21);
+frame.set("loop.last", t_19 === t_20.length - 1);
+output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_21),"url", env.autoesc), env.autoesc);
+output += "\" data-rel=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_21),"url", env.autoesc), env.autoesc);
+output += "\" class=\"open delete\">";
+output += runtime.suppressValue(runtime.memberLookup((t_21),"title", env.autoesc), env.autoesc);
+output += "</a>»";
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+output += " ,";
+}
+}
+}frame = frame.pop();
+output += "\n        ";
 }
 }
 }
@@ -209,19 +316,19 @@ output += "</a>\n        ";
 output += "\n            <a href=\"#\" class=\"remove\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "\"></a>\n        </li>\n\n        ";
-var t_4;
-t_4 = env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc));
-frame.set("last_day", t_4);
+var t_22;
+t_22 = env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc));
+frame.set("last_day", t_22);
 if(!frame.parent) {
-context.setVariable("last_day", t_4);
+context.setVariable("last_day", t_22);
 context.addExport("last_day");
 }
 output += "\n        ";
-var t_5;
-t_5 = runtime.memberLookup((t_3),"type", env.autoesc);
-frame.set("last_type", t_5);
+var t_23;
+t_23 = runtime.memberLookup((t_3),"type", env.autoesc);
+frame.set("last_type", t_23);
 if(!frame.parent) {
-context.setVariable("last_type", t_5);
+context.setVariable("last_type", t_23);
 context.addExport("last_type");
 }
 output += "\n    ";

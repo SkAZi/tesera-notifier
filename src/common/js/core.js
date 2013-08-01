@@ -12,6 +12,10 @@ var Core = {
             return $('<div id="super-wrapper">'+mdta+'</div>');
         },
 
+        'common': function(job, text){
+
+        },
+
         'auth': function(job, text){
             if(text.indexOf('id="open-authorize"') == -1){
                 Models.State.authorized = new Date();
@@ -60,7 +64,7 @@ var Core = {
                             Models.Events.add({
                                 'type': 'message',
                                 'day': message.day,
-                                'uid': Models.Messages.get_uid(message)
+                                'related': Models.Messages.get_uid(message)
                             })
                         );
                     }
@@ -101,7 +105,11 @@ var Core = {
                     if(id > last_news.id){
                         Models.Events.add({
                             'day': new Date(), // TODO: Вычислять реальную дату
-                            'type': 'new'
+                            'type': 'new',
+                            'related': {
+                                'title': $this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + $this.find('h3 a').attr('href')
+                            }
                         });
                     }
 
@@ -141,7 +149,11 @@ var Core = {
                     if(id > last_article.id){
                         Models.Events.add({
                             'day': new Date(), // TODO: Вычислять реальную дату
-                            'type': 'article'
+                            'type': 'article',
+                            'related': {
+                                'title': $this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + $this.find('h3 a').attr('href')
+                            }
                         });
                     }
 
@@ -182,7 +194,11 @@ var Core = {
                     if(id > last_article.id){
                         Models.Events.add({
                             'day': new Date(), // TODO: Вычислять реальную дату
-                            'type': type
+                            'type': type,
+                            'related': {
+                                'title': $this.find('.game-about .data a').text(),
+                                'url': 'http://tesera.ru' + $this.find('.game-about .data a').attr('href')
+                            }
                         });
                     }
 
@@ -249,7 +265,7 @@ var Core = {
                             Models.Events.add({
                                 'type': 'comment',
                                 'id': comment.target.id,
-                                'uid': Models.Comments.get_uid(comment),
+                                'related': Models.Comments.get_uid(comment),
                                 'day': comment.day,
                                 'target': comment.target
                             })
@@ -311,7 +327,7 @@ var Core = {
 
                 split_url[split_url.length-1] = page;
                 this._pool.unshift(new Core.Job(
-                    split_url.join("/"), new Date(), job.type, null, callback
+                    split_url.join("/"), job.type, new Date(), null, null, callback
                 ));
 
                 var self = this;
@@ -380,18 +396,18 @@ var Core = {
 
 
     Job: (function(){
-        var Job = function(url, last_update, type, period, callback){
+        var Job = function(url, type, last_update, period, parsers, callback){
             this.url = url;
             this.type = type;
-            this.parsers = ['auth', type];
+            this.parsers = parsers || ['auth', type];
             this.last_update = last_update || new Date();
             this.period = period;
-            this.date = new Date(this.last_update.valueOf() + this.period);
-            this.callback = callback || null;
+            this.date = new Date((this.last_update.valueOf() + this.period) || 0);
+            this.callback = callback;
         }  
 
         Job.prototype = {
-            'execute': function(extra_callback){
+            'execute': function(callback){
                 var self = this;
                 Utils.log("Start executing job " + this.type);
                 Utils.async_lm_get(this.url, this.last_update, function(text, xml){
@@ -408,11 +424,12 @@ var Core = {
                         self.returnToPool();  
                     }
 
-                    if(self.callback) self.callback(); 
-                    if(extra_callback) extra_callback(); 
+                    if(this.callback) this.callback();
+                    if(callback) callback();
                 }, function(error){
                     self.returnToPool();
-                    if(extra_callback) extra_callback(); 
+                    if(this.callback) this.callback();
+                    if(callback) callback();
                     Utils.log("Error in job " + self.type + " code " + error);
                 });
             },

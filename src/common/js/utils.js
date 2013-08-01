@@ -35,7 +35,7 @@ var Utils = {
 
     parse_url: function(url){
         var ret = {type: "", id: 0};
-        if(url.indexOf('//tesera.ru/') < 0){
+        if(!url || url.indexOf('//tesera.ru/') < 0){
             return ret;
         }
 

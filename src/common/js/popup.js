@@ -130,7 +130,9 @@ KangoAPI.onReady(function() {
         },
 
         'remove': function(){
-            Models.Events.remove(Models.getItems($(this).attr('data-rel')));
+            var uids = $(this).attr('data-rel').split('|'),
+                items = Models.getItems(uids[0]);
+            Models.Events.remove(items, uids[1]);
             kango.invokeAsync('Background.updateBadge');
             $('#tabs li a.active').click();
             return false;
@@ -262,7 +264,6 @@ KangoAPI.onReady(function() {
 
     /* Utils */
     nunjucks.env.addFilter('date', function(date, format) {
-        Utils.log(date);
         return format? Utils.format_date(new Date(date)):
                        Utils.humanize_time(Utils.strip_time(new Date(date)));
     });
@@ -275,6 +276,13 @@ KangoAPI.onReady(function() {
         return (no? '' :(n + ' ')) + (((n % 10 == 1) && (n % 100 != 11))? var1:
                ((n % 10 >= 2) && (n % 10 <= 4) && (n % 100 < 10 || n % 100 >= 20))? var2:
                 var3);
+    });
+
+    nunjucks.env.addFilter('get_item_key', function(uid, field) {
+        var obj = Models.getItem(uid);
+        return obj? field.split('.').reduce(function(ret, item){
+            return ret[item]? ret[item]: "";
+        }, obj): "";
     });
 
 

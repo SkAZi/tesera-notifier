@@ -105,36 +105,55 @@ var Models = {
                     "target": params.target || null
                 });
 
-            obj.related.push(params.uid);
+            obj.related.push(params.related);
             obj.count = obj.related.length;
             return this.save(obj);
         },
 
-        'remove': function(targets){
-            Utils.log(JSON.stringify(targets));
+        'remove': function(targets, subtargets){
+            var subtargets = subtargets? typeof subtargets === 'string'? 
+                                    [subtargets]: subtargets: [];
+
             for(var i in targets){
+
+                // Если удаляется объект
                 if(targets[i].event){
-                    var target = targets[i],
-                        obj = this.get(target.event);
+                    var obj = targets[i],
+                        event = this.get(obj.event);
 
-                    if(obj.uid){
-                        if(obj.related && obj.related.length > 1 && obj.related.indexOf(target.uid) > -1){
-                            obj.related.splice(obj.related.indexOf(target.uid), 1);
-                            obj.count--;
-                            this.save(obj);
-                        } else {
-                            kango.storage.removeItem(obj.uid);
+                    if(event.related && event.related.length > 1 && event.related.indexOf(obj.uid) > -1){
+                        event.related.splice(event.related.indexOf(obj.uid), 1);
+                        event.count--;
+                        this.save(event);
+                    } else {
+                        kango.storage.removeItem(event.uid);
+                    }
+
+                    kango.storage.removeItem(obj.uid);
+
+                // Если удаляемся евент
+                } else if(targets[i].related && targets[i].related.length){
+                    var event = targets[i];
+
+                    for(var j in event.related){
+                        // Если в related лежат id-шники реальных объектов
+                        // и если нет подцели удаления
+                        if(!subtargets.length && typeof event.related[j] === 'string'){
+                            kango.storage.removeItem(event.related[j]);
+                        } else if(subtargets.indexOf(event.related[j].url) > -1){
+                            event.related.splice(j, 1);
                         }
                     }
-                } else if(targets[i].related){
-                    for(var j in targets[i].related){
-                        if(typeof targets[i].related[j] === 'string'){
-                            kango.storage.removeItem(targets[i].related[j]);
-                        }
+
+                    if(!subtargets.length || !event.related.length){
+                        kango.storage.removeItem(event.uid);
+                    } else {
+                        event.count = event.related.length;
+                        this.save(event);   
                     }
+                } else {
+                    kango.storage.removeItem(targets[i].uid);
                 }
-
-                kango.storage.removeItem(targets[i].uid);
             }
         },
 
