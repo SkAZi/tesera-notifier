@@ -10,25 +10,11 @@ var Background = {
         kango.browser.addEventListener(kango.browser.event.TAB_CHANGED, this.setIcon);
         kango.browser.addEventListener(kango.browser.event.TAB_CREATED, this.setIcon);
         kango.browser.addEventListener(kango.browser.event.DOCUMENT_COMPLETE, this.setIcon);
-        kango.browser.addEventListener(kango.browser.event.BEFORE_NAVIGATE, this.secure);
 
         this.setIcon();
         this.checkAuth();
         this.updateBadge();
         this.updateInterval();
-    },
-
-    'secure': function(event){
-        if(event.url == 'http://tesera.ru/user_register/'){
-            if(!this._secure_profile || this._secure_profile < Date.now() - 5*60000){
-                this._secure_profile = false;
-                event.target.close('about:blank');
-                if(confirm('Предотвращена попытка перехода в профиль. Подтвердите, что это пытаетесь сделать вы.')){
-                    this._secure_profile = Date.now();
-                    kango.browser.tabs.create({'url': 'http://tesera.ru/user_register/', 'focused': true});
-                }
-            }
-        }
     },
 
     'setIcon': function(event){
