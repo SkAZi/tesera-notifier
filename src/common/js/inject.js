@@ -65,4 +65,25 @@ $(function(){
             kango.invokeAsync(set_method, params, last_post, new Date());
         });
     });
+
+    /* А давайте-ка попробуем хоть немножко подлатать дыры в безопасности */
+    $(['.raw_text_output [onfocus]',
+       '.raw_text_output [onmouseover]',
+       '.raw_text_output [onmouseout]',
+       '.raw_text_output [onmousemove]',
+       '.raw_text_output [onclick]',
+       '.raw_text_output [onmousedown]',
+       '.raw_text_output [onmouseup]',
+       '.raw_text_output [ondblclick]',
+       '.raw_text_output [oncontextmenu]',
+       '.raw_text_output [href^="javascript:"]'].join(',')
+    ).attr('onfocus', null)
+     .attr('onmouseover', null)
+     .attr('onmouseout', null)
+     .attr('onmousemove', null)
+     .attr('onclick', null)
+     .attr('onmousedown', null)
+     .attr('ondblclick', null)
+     .attr('oncontextmenu', null)
+     .attr('href', '#');
 });
