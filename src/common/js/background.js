@@ -4,7 +4,7 @@ var Background = {
     _secure_profile: false,
 
     init: function(){
-        window.DEBUG = Models.Settings.get("debug", true);
+        window.DEBUG = Models.Settings.get("debug", false);
         kango.ui.browserButton.setBadgeBackgroundColor([225, 127, 22, 255]);
 
         kango.browser.addEventListener(kango.browser.event.TAB_CHANGED, this.setIcon);

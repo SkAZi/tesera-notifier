@@ -30,7 +30,9 @@ var Utils = {
     },
 
     clean_url: function(url, full){
-        return url.replace(/^(https?:\/\/tesera\.ru\/)(.*)(\/)[^\/]*/, full? '$1$2$3': '$2');
+        return url.split('#')[0].split('?')[0]
+                  .replace(/^(https?:\/\/)(www\.)?(tesera\.ru\/)(.*?)(\/)?$/, 
+                    full? '$1$3$4/': '$4');
     },
 
     parse_url: function(url){
@@ -52,8 +54,7 @@ var Utils = {
     },
 
     parse_title: function(title){
-        // TODO: Быть может парсить аккуратнее
-        return title.split('|')[0].replace(/^ +| +$/g, '')
+        return title.split('|')[0].trim()
     },
 
     humanize_type: function(type){

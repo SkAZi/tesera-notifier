@@ -12,8 +12,36 @@ var Core = {
             return $('<div id="super-wrapper">'+mdta+'</div>');
         },
 
-        'common': function(job, text){
+        'common': function(job, text, items_selector, parser, last_id_getter){
+            var id = 0,
+                html = this._buildDOM(text),
+                last_id = 0,
+                last_object = Models.Common.get_last(job.type),
+                items = html.find('.commentos .item'),
+                callback = job.callback || function(){
+                        return Models.Common.set_last(job.type, {
+                            'id': last_id,
+                            'date': new Date()
+                        });                    
+                    };
 
+            if(last_object.id){
+                items.each(function(){
+                    var $this = $(this);
+                    id = parser.call($this, last_object);
+                    if(id > last_id) last_id = id;
+                });
+
+                if(id > last_object.id){
+                    Core.Pool.addHelper(job, callback)
+                    return null;
+                }
+            } else if(items.length){
+                last_id = parseInt(last_id_getter(items));
+            }
+
+            Background.updateBadge();
+            return callback();
         },
 
         'auth': function(job, text){
@@ -29,35 +57,22 @@ var Core = {
         },
 
         'messages': function(job, text){
-            var id = 0,
-                html = this._buildDOM(text),
-                last_id = 0,
-                last_message = Models.Common.get_last('messages'),
-                items = html.find('.commentos .item'),
-                callback = job.callback || function(){
-                        return Models.Common.set_last('messages', {
-                            'id': last_id,
-                            'date': new Date()
-                        });                    
-                    };
-
-            if(last_message.id){
-                items.each(function(){
-                    var $this = $(this);
-
-                    id = parseInt($this.find('.user').attr('forid'));
-                    if(id > last_message.id){
-                        var name = $this.find('.user a:not(.add)'),
-                            title = $this.find('b.title'),
+            return Core.Parsers.common(job, text, 
+                '.commentos .item', 
+                function(last_object){
+                    var id = parseInt(this.find('.user').attr('forid'));
+                    if(id > last_object.id){
+                        var name = this.find('.user a:not(.add)'),
+                            title = this.find('b.title'),
                             message = {
                                 'id': id,
-                                'day': new Date(), // TODO: Вычислять реальную дату
+                                'day': new Date(),
                                 'from': {
-                                    'id': parseInt($this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
+                                    'id': parseInt(this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
                                     'name': name.length? name.text(): null
                                 },
                                 'title': title.length? title.text(): "",
-                                'body': $this.find('div.body > p').html()
+                                'body': this.find('div.body > p').html()
                             };
 
                         Models.Messages.add(message,
@@ -68,177 +83,83 @@ var Core = {
                             })
                         );
                     }
-
-                    if(id > last_id) last_id = id;
+                    return id;
+                }, function(items){
+                    return items.eq(0).find('.user').attr('forid');
                 });
-
-                if(id > last_message.id){
-                    Core.Pool.addHelper(job, callback)
-                    return null;
-                }
-            } else if(items.length){
-                last_id = parseInt(items.eq(0).find('.user').attr('forid'));
-            }
-
-            Background.updateBadge();
-            return callback();
         },
 
         'news': function(job, text){
-            var id = 0,
-                html = this._buildDOM(text),
-                last_id = 0,
-                last_news = Models.Common.get_last('news'),
-                items = html.find('#news_news .game'),
-                callback = job.callback || function(){
-                    return Models.Common.set_last('news', {
-                        'id': last_id,
-                        'date': new Date()
-                    }); 
-                };
-
-            if(last_news.id){
-                items.each(function(){
-                    var $this = $(this);
-
-                    id = parseInt($this.find('h3 a').attr('href').replace('/new/', ''));
-                    if(id > last_news.id){
+            return Core.Parsers.common(job, text, '#news_news .game', 
+                function(last_object){
+                    id = parseInt(this.find('h3 a').attr('href').replace('/new/', ''));
+                    if(id > last_object.id){
                         Models.Events.add({
-                            'day': new Date(), // TODO: Вычислять реальную дату
+                            'day': new Date(),
                             'type': 'new',
                             'related': {
-                                'title': $this.find('h3 a b').text(),
-                                'url': 'http://tesera.ru' + $this.find('h3 a').attr('href')
+                                'title': this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
                             }
                         });
                     }
-
-                    if(id > last_id) last_id = id;
+                    return id;
+                }, function(items){
+                    return items.eq(0).find('h3 a').attr('href').replace('/new/', '');
                 });
-
-                if(id > last_news.id){
-                    Core.Pool.addHelper(job, callback)
-                    return null;
-                }
-            } else if(items.length){
-                last_id = parseInt(items.eq(0).find('h3 a').attr('href').replace('/new/', ''));
-            }
-
-            Background.updateBadge();
-            return callback();
         },
 
         'articles': function(job, text){
-            var id = 0,
-                html = this._buildDOM(text),
-                last_id = 0,
-                last_article = Models.Common.get_last('articles'),
-                items = html.find('#articles_articles .game'),
-                callback = job.callback || function(){
-                    return Models.Common.set_last('articles', {
-                        'id': last_id,
-                        'date': new Date()
-                    });
-                };
-
-            if(last_article.id){
-                items.each(function(){
-                    var $this = $(this);
-                    
-                    id = parseInt($this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
-                    if(id > last_article.id){
+            return Core.Parsers.common(job, text, 
+                '#articles_articles .game', 
+                function(last_object){
+                    id = parseInt(this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
+                    if(id > last_object.id){
                         Models.Events.add({
-                            'day': new Date(), // TODO: Вычислять реальную дату
+                            'day': new Date(),
                             'type': 'article',
                             'related': {
-                                'title': $this.find('h3 a b').text(),
-                                'url': 'http://tesera.ru' + $this.find('h3 a').attr('href')
+                                'title': this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
                             }
                         });
                     }
-
-                    if(id > last_id) last_id = id;
+                    return id;
+                }, function(items){
+                    return items.eq(0).find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1');
                 });
-
-                if(id > last_article.id){
-                    Core.Pool.addHelper(job, callback)
-                    return null;
-                }
-            } else if(items.length){
-                last_id = parseInt(items.eq(0).find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
-            }
-
-            Background.updateBadge();
-            return callback();
         },
 
         'diaries': function(job, text){
-            var id = 0,
-                html = this._buildDOM(text),
-                last_id = 0,
-                last_article = Models.Common.get_last('diaries'),
-                items = html.find('.main .usertimes'),
-                callback = job.callback || function(){
-                    return Models.Common.set_last('diaries', {
-                        'id': last_id,
-                        'date': new Date()
-                    });
-                };
-
-            if(last_article.id){
-                items.each(function(){
-                    var $this = $(this),
-                        type = $this.find('.breadcrumbs span a').attr('href').split('/')[2];
-                    
-                    id = parseInt($this.find('.game-about a').attr('href').split('/')[4] || 0);
-                    if(id > last_article.id){
+            return Core.Parsers.common(job, text, 
+                '.main .usertimes', 
+                function(last_object){
+                    id = parseInt(this.find('.game-about a').attr('href').split('/')[4] || 0);
+                    if(id > last_object.id){
                         Models.Events.add({
-                            'day': new Date(), // TODO: Вычислять реальную дату
+                            'day': new Date(),
                             'type': type,
                             'related': {
-                                'title': $this.find('.game-about .data a').text(),
-                                'url': 'http://tesera.ru' + $this.find('.game-about .data a').attr('href')
+                                'title': this.find('.game-about .data a').text(),
+                                'url': 'http://tesera.ru' + this.find('.game-about .data a').attr('href')
                             }
                         });
                     }
-
-                    if(id > last_id) last_id = id;
+                    return id;
+                }, function(items){
+                    return items.eq(0).find('.game-about a').attr('href').split('/')[4] || 0;
                 });
-
-                if(id > last_article.id){
-                    Core.Pool.addHelper(job, callback)
-                    return null;
-                }
-            } else if(items.length){
-                last_id = parseInt(items.eq(0).find('.game-about a').attr('href').split('/')[4] || 0);
-            }
-
-            Background.updateBadge();
-            return callback();
         },
 
         'comments': function(job, text){
-            var id = 0,
-                html = this._buildDOM(text),
-                last_id = 0,
-                last_comment = Models.Common.get_last('comments'),
-                items = html.find('.commentos .item'),
-                callback = job.callback || function(){
-                        return Models.Common.set_last('comments', {
-                            'id': last_id,
-                            'date': new Date()
-                        });                    
-                    };
-
-            if(last_comment.id){
-                items.each(function(){
-                    var $this = $(this);
-
-                    id = parseInt($this.find('.user').attr('forid'));
-                    if(id > last_comment.id){
-                        var name = $this.find('.user a').eq(0),
-                            title = $this.find('b.title'),
-                            subscription = Models.Subscriptions.get('http://tesera.ru' + $this.find('.user a').eq(1).attr('href')),
+            return Core.Parsers.common(job, text, 
+                '.commentos .item', 
+                function(last_object){
+                    id = parseInt(this.find('.user').attr('forid'));
+                    if(id > last_object.id){
+                        var name = this.find('.user a').eq(0),
+                            title = this.find('b.title'),
+                            subscription = Models.Subscriptions.get('http://tesera.ru' + this.find('.user a').eq(1).attr('href')),
                             comment;
 
                         if(!subscription.id) return; 
@@ -246,9 +167,9 @@ var Core = {
 
                         comment = {
                             'id': id,
-                            'day': new Date(), // TODO: Вычислять реальную дату
+                            'day': new Date(),
                             'from': {
-                                'id': parseInt($this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
+                                'id': parseInt(this.find('img.pic').attr('data-src').replace(/^.*\/items\/(\d+),22\/.*$/, '$1')),
                                 'name': name.length? name.text(): null
                             },
                             'target': {
@@ -258,7 +179,7 @@ var Core = {
                                 'title': subscription.title
                             },
                             'title': title.length? title.text(): "",
-                            'body': $this.find('div.body > p').html()
+                            'body': this.find('div.body > p').html()
                         };
                         
                         Models.Comments.add(comment, 
@@ -271,20 +192,10 @@ var Core = {
                             })
                         );
                     }
-
-                    if(id > last_id) last_id = id;
+                    return id;
+                }, function(items){
+                    return items.eq(0).find('.user').attr('forid');
                 });
-
-                if(id > last_comment.id){
-                    Core.Pool.addHelper(job, callback)
-                    return null;
-                }
-            } else if(items.length){
-                last_id = parseInt(items.eq(0).find('.user').attr('forid'));
-            }
-
-            Background.updateBadge();
-            return callback();
         },
 
         'games': function(job, text){
@@ -333,7 +244,7 @@ var Core = {
                 var self = this;
                 setTimeout(function(){
                     self.executeNextJob(true);
-                }, 500);
+                }, 2000);
             },
 
             'removeJob': function(job){
@@ -416,18 +327,13 @@ var Core = {
                             Core.Parsers[self.parsers[i]](self, text);
                         }
                     }
-
-                    Utils.log("Finished job " + self.type);
                     
-                    if(self.period){
-                        self.last_update = new Date();
-                        self.returnToPool();  
-                    }
-
+                    self.returnToPool();  
                     if(this.callback) this.callback();
                     if(callback) callback();
+                    Utils.log("Finished job " + self.type);
                 }, function(error){
-                    self.returnToPool();
+                    self.returnToPool();  
                     if(this.callback) this.callback();
                     if(callback) callback();
                     Utils.log("Error in job " + self.type + " code " + error);
@@ -435,6 +341,8 @@ var Core = {
             },
 
             'returnToPool': function(){
+                if(!this.period) return;
+                this.last_update = new Date();
                 this.date = new Date(this.last_update.valueOf() + this.period);
                 Core.Pool.addJob(this);
             },

@@ -27,7 +27,7 @@
         {% elif object.type == 'new' %}
             На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} {{ object.count|pluralize("новость", "новости", "новостей") }}: {% for related in object.related %}«<a href="{{ related.url }}" data-rel="{{ object.uid }}|{{ related.url }}" class="open delete">{{ related.title }}</a>»{% if not loop.last %}, {% endif %}{% endfor %}
         {% elif object.type == 'journal' %}
-            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} {{ object.count|pluralize("запись в дневнике", "записи в дневниках", "записей в дневниках") }}: {% for related in object.related %}«<a href="{{ object.uid }}|{{ related.url }}">{{ related.title }}</a>»{% if not loop.last %} ,{% endif %}{% endfor %}
+            На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} {{ object.count|pluralize("запись в дневнике", "записи в дневниках", "записей в дневниках") }}: {% for related in object.related %}«<a href="{{ related.url }}" data-rel="{{ object.uid }}|{{ related.url }}" class="open delete">{{ related.title }}</a>»{% if not loop.last %} ,{% endif %}{% endfor %}
         {% elif object.type == 'thoughtus' %}
             На сайте {{ object.count|pluralize("появилась", "появилось", "появилось", true) }} {{ object.count|pluralize("мысль", "мысли", "мыслей") }}: {% for related in object.related %}«<a href="{{ related.url }}" data-rel="{{ object.uid }}|{{ related.url }}" class="open delete">{{ related.title }}</a>»{% if not loop.last %} ,{% endif %}{% endfor %}
         {% elif object.type == 'game' %}
