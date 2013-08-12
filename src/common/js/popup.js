@@ -132,6 +132,10 @@ KangoAPI.onReady(function() {
         'remove': function(){
             var uids = $(this).attr('data-rel').split('|'),
                 items = Models.getItems(uids[0]);
+
+            Utils.log('Cleaning up: ' + JSON.stringify(Models.getKeys(uids[0])));
+            Utils.log('From: ' + JSON.stringify(Models.getKeys()));
+
             Models.Events.remove(items, uids[1]);
             kango.invokeAsync('Background.updateBadge');
             $('#tabs li a.active').click();

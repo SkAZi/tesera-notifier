@@ -42,7 +42,7 @@ output += "\">\n            <a href=\"http://tesera.ru/user/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "/\" class=\"open\"><img class=\"pic\" src=\"http://tesera.ru/images/items/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"id", env.autoesc), env.autoesc);
-output += ",22/32x32xpa/photo.jpg\" width=\"32\" height=\"32\" alt=\"\" title=\"\">\n            <div class=\"text\"></a>\n                <p class=\"nick\"><a href=\"http://tesera.ru/user/";
+output += ",22/24x24xpa/photo.jpg\" width=\"24\" height=\"24\" alt=\"\" title=\"\">\n            <div class=\"text\"></a>\n                <p class=\"nick\"><a href=\"http://tesera.ru/user/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "/\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
@@ -50,7 +50,7 @@ output += "</a></p>\n                ";
 if(runtime.memberLookup((t_3),"title", env.autoesc)) {
 output += "<h4><a href=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"url", env.autoesc), env.autoesc);
-output += "/comments#post";
+output += "comments#post";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
 output += "\" class=\"open unseen\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"title", env.autoesc), env.autoesc);
@@ -112,6 +112,8 @@ var t_2 = runtime.contextOrFrameLookup(context, frame, "object_list");
 if(t_2 !== undefined) {for(var t_1=0; t_1 < t_2.length; t_1++) {
 var t_3 = t_2[t_1];
 frame.set("object", t_3);
+frame.set("loop.index", t_1 + 1);
+frame.set("loop.first", t_1 === 0);
 frame.set("loop.last", t_1 === t_2.length - 1);
 output += "\n        ";
 if(env.getFilter("date")(runtime.memberLookup((t_3),"day", env.autoesc)) != runtime.contextOrFrameLookup(context, frame, "last_day")) {
@@ -143,11 +145,16 @@ var t_5 = runtime.memberLookup((t_3),"related", env.autoesc);
 if(t_5 !== undefined) {for(var t_4=0; t_4 < t_5.length; t_4++) {
 var t_6 = t_5[t_4];
 frame.set("uid", t_6);
+frame.set("loop.index", t_4 + 1);
+frame.set("loop.first", t_4 === 0);
 frame.set("loop.last", t_4 === t_5.length - 1);
-output += runtime.suppressValue(env.getFilter("get_item_key")(t_6,"from.name"), env.autoesc);
-if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
+if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"first", env.autoesc) && !runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
 output += ", ";
 }
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc) && runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"index", env.autoesc) > 1) {
+output += " и ";
+}
+output += runtime.suppressValue(env.getFilter("default")(env.getFilter("get_item_key")(t_6,"from.name"),"Tesera",true), env.autoesc);
 }
 }frame = frame.pop();
 output += "\n        ";
@@ -238,10 +245,12 @@ var t_15 = t_14[t_13];
 frame.set("related", t_15);
 frame.set("loop.last", t_13 === t_14.length - 1);
 output += "«<a href=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_15),"url", env.autoesc), env.autoesc);
+output += "\" data-rel=\"";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"uid", env.autoesc), env.autoesc);
 output += "|";
 output += runtime.suppressValue(runtime.memberLookup((t_15),"url", env.autoesc), env.autoesc);
-output += "\">";
+output += "\" class=\"open delete\">";
 output += runtime.suppressValue(runtime.memberLookup((t_15),"title", env.autoesc), env.autoesc);
 output += "</a>»";
 if(!runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "loop")),"last", env.autoesc)) {
@@ -407,7 +416,7 @@ output += ">\n            <a href=\"http://tesera.ru/user/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "/\" class=\"open\"><img class=\"pic\" src=\"http://tesera.ru/images/items/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"id", env.autoesc), env.autoesc);
-output += ",22/32x32/photo.jpg\" width=\"32\" height=\"32\" alt=\"\" title=\"\"></a>\n            \n            <div class=\"text\">\n                <p class=\"nick\"><a href=\"http://tesera.ru/user/";
+output += ",22/24x24/photo.jpg\" width=\"32\" height=\"32\" alt=\"\" title=\"\"></a>\n            \n            <div class=\"text\">\n                <p class=\"nick\"><a href=\"http://tesera.ru/user/";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);
 output += "/\" class=\"open\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"from", env.autoesc)),"name", env.autoesc), env.autoesc);

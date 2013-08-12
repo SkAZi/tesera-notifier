@@ -1,4 +1,5 @@
 var Utils = {
+    /* Асинхронный запрос с учётом даты последней модификации */
     async_lm_get: function(url, last_modified, success, error){
         var xmlhttp = kango.xhr.getXMLHttpRequest(),
             headersChecked = false;
@@ -29,12 +30,14 @@ var Utils = {
         xmlhttp.send(null);
     },
 
+    /* Очистка и валидация url */
     clean_url: function(url, full){
         return url.split('#')[0].split('?')[0]
                   .replace(/^(https?:\/\/)(www\.)?(tesera\.ru\/)(.*?)(\/)?$/, 
                     full? '$1$3$4/': '$4');
     },
 
+    /* Вычленение типа объекта из url */
     parse_url: function(url){
         var ret = {type: "", id: 0};
         if(!url || url.indexOf('//tesera.ru/') < 0){
@@ -53,10 +56,12 @@ var Utils = {
         return ret  
     },
 
+    /* Разбор заголовка */
     parse_title: function(title){
         return title.split('|')[0].trim()
     },
 
+    /* Типы объектов в системе */
     humanize_type: function(type){
         return {
             'message': "Сообщения",
@@ -77,6 +82,7 @@ var Utils = {
         }[type];
     },
 
+    /* Форматтер даты */
     'format_date': function(date, format){
         var format = format || "%Y%M%D";
         return format.replace(/%\w/g, function(param){
@@ -98,6 +104,7 @@ var Utils = {
         });
     },
 
+    /* Установка времени на начало дня */
     'strip_time': function(date){
         var date = new Date(date);
         date.setHours(0);
@@ -107,6 +114,7 @@ var Utils = {
         return date;
     },
 
+    /* Очеловечивание даты */
     'humanize_time': function(date){
         if(date >= Utils.strip_time()){
             return 'сегодня';
@@ -118,6 +126,7 @@ var Utils = {
         return Utils.format_date(date, "%D %U");
     },
 
+    /* Лог данных только в DEBUG-режиме и всё на одной странице */
     'log': function(msg, type){
         if(!window.DEBUG) return;
         var type = type || 'Notice';

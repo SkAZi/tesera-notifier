@@ -1,6 +1,6 @@
 var Core = {
 
-    // TODO: ПодDRYить
+    /* Парсеры данных */
     Parsers: {
         '_buildDOM': function(text){
             var text = text.replace(/src(=['"][^'"]+['"])/g, 'data-src=$1'),
@@ -17,15 +17,16 @@ var Core = {
                 html = this._buildDOM(text),
                 last_id = 0,
                 last_object = Models.Common.get_last(job.type),
-                items = html.find('.commentos .item'),
+                items = html.find(items_selector),
                 callback = job.callback || function(){
+                        Utils.log('Last id for '+ job.type +' is ' + last_id);
                         return Models.Common.set_last(job.type, {
-                            'id': last_id,
+                            'id': last_id || last_object.id || 0,
                             'date': new Date()
-                        });                    
+                        });
                     };
 
-            if(last_object.id){
+            if(last_object.id && parseInt(last_object.id) > 0){
                 items.each(function(){
                     var $this = $(this);
                     id = parser.call($this, last_object);
@@ -37,7 +38,7 @@ var Core = {
                     return null;
                 }
             } else if(items.length){
-                last_id = parseInt(last_id_getter(items));
+                last_id = last_id_getter(items);
             }
 
             Background.updateBadge();
@@ -85,69 +86,7 @@ var Core = {
                     }
                     return id;
                 }, function(items){
-                    return items.eq(0).find('.user').attr('forid');
-                });
-        },
-
-        'news': function(job, text){
-            return Core.Parsers.common(job, text, '#news_news .game', 
-                function(last_object){
-                    id = parseInt(this.find('h3 a').attr('href').replace('/new/', ''));
-                    if(id > last_object.id){
-                        Models.Events.add({
-                            'day': new Date(),
-                            'type': 'new',
-                            'related': {
-                                'title': this.find('h3 a b').text(),
-                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
-                            }
-                        });
-                    }
-                    return id;
-                }, function(items){
-                    return items.eq(0).find('h3 a').attr('href').replace('/new/', '');
-                });
-        },
-
-        'articles': function(job, text){
-            return Core.Parsers.common(job, text, 
-                '#articles_articles .game', 
-                function(last_object){
-                    id = parseInt(this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
-                    if(id > last_object.id){
-                        Models.Events.add({
-                            'day': new Date(),
-                            'type': 'article',
-                            'related': {
-                                'title': this.find('h3 a b').text(),
-                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
-                            }
-                        });
-                    }
-                    return id;
-                }, function(items){
-                    return items.eq(0).find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1');
-                });
-        },
-
-        'diaries': function(job, text){
-            return Core.Parsers.common(job, text, 
-                '.main .usertimes', 
-                function(last_object){
-                    id = parseInt(this.find('.game-about a').attr('href').split('/')[4] || 0);
-                    if(id > last_object.id){
-                        Models.Events.add({
-                            'day': new Date(),
-                            'type': type,
-                            'related': {
-                                'title': this.find('.game-about .data a').text(),
-                                'url': 'http://tesera.ru' + this.find('.game-about .data a').attr('href')
-                            }
-                        });
-                    }
-                    return id;
-                }, function(items){
-                    return items.eq(0).find('.game-about a').attr('href').split('/')[4] || 0;
+                    return parseInt(items.eq(0).find('.user').attr('forid'));
                 });
         },
 
@@ -194,7 +133,69 @@ var Core = {
                     }
                     return id;
                 }, function(items){
-                    return items.eq(0).find('.user').attr('forid');
+                    return parseInt(items.eq(0).find('.user').attr('forid'));
+                });
+        },
+
+        'news': function(job, text){
+            return Core.Parsers.common(job, text, '#news_news .game', 
+                function(last_object){
+                    id = parseInt(this.find('h3 a').attr('href').replace('/new/', ''));
+                    if(id > last_object.id){
+                        Models.Events.add({
+                            'day': new Date(),
+                            'type': 'new',
+                            'related': {
+                                'title': this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
+                            }
+                        });
+                    }
+                    return id;
+                }, function(items){
+                    return parseInt(items.eq(0).find('h3 a').attr('href').replace('/new/', ''));
+                });
+        },
+
+        'articles': function(job, text){
+            return Core.Parsers.common(job, text, 
+                '#articles_articles .game', 
+                function(last_object){
+                    id = parseInt(this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
+                    if(id > last_object.id){
+                        Models.Events.add({
+                            'day': new Date(),
+                            'type': 'article',
+                            'related': {
+                                'title': this.find('h3 a b').text(),
+                                'url': 'http://tesera.ru' + this.find('h3 a').attr('href')
+                            }
+                        });
+                    }
+                    return id;
+                }, function(items){
+                    return parseInt(items.eq(0).find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
+                });
+        },
+
+        'diaries': function(job, text){
+            return Core.Parsers.common(job, text, 
+                '.main .usertimes', 
+                function(last_object){
+                    id = parseInt(this.find('.game-about a').attr('href').split('/')[4] || 0);
+                    if(id > last_object.id){
+                        Models.Events.add({
+                            'day': new Date(),
+                            'type': type,
+                            'related': {
+                                'title': this.find('.game-about .data a').text(),
+                                'url': 'http://tesera.ru' + this.find('.game-about .data a').attr('href')
+                            }
+                        });
+                    }
+                    return id;
+                }, function(items){
+                    return parseInt(items.eq(0).find('.game-about a').attr('href').split('/')[4] || 0);
                 });
         },
 
@@ -212,6 +213,7 @@ var Core = {
     },
 
 
+    /* Пул задач */
     Pool: (function(){
         var Pool = function(){
             this._pool = [];
@@ -306,6 +308,7 @@ var Core = {
     })(),
 
 
+    /* Задача */
     Job: (function(){
         var Job = function(url, type, last_update, period, parsers, callback){
             this.url = url;
@@ -328,22 +331,29 @@ var Core = {
                         }
                     }
                     
-                    self.returnToPool();  
+                    self.returnToPool(false);  
                     if(this.callback) this.callback();
                     if(callback) callback();
                     Utils.log("Finished job " + self.type);
                 }, function(error){
-                    self.returnToPool();  
+                    if(error >= 500){
+                        Background.slowDown();
+                        self.returnToPool(true);
+                    } else {
+                        self.returnToPool(false);
+                    }
                     if(this.callback) this.callback();
                     if(callback) callback();
                     Utils.log("Error in job " + self.type + " code " + error);
                 });
             },
 
-            'returnToPool': function(){
+            'returnToPool': function(previous){
                 if(!this.period) return;
                 this.last_update = new Date();
-                this.date = new Date(this.last_update.valueOf() + this.period);
+                if(!previous){
+                    this.date = new Date(this.last_update.valueOf() + this.period);
+                }
                 Core.Pool.addJob(this);
             },
 

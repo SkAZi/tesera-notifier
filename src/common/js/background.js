@@ -3,6 +3,7 @@ var Background = {
     _cleanup_interval: null,
     _secure_profile: false,
 
+    /* Инициализация приложения, установка дефолтных значений и событий */
     init: function(){
         window.DEBUG = Models.Settings.get("debug", false);
         kango.ui.browserButton.setBadgeBackgroundColor([225, 127, 22, 255]);
@@ -17,6 +18,7 @@ var Background = {
         this.updateInterval();
     },
 
+    /* Установка иконки в зависимости от статуса подписки */
     'setIcon': function(event){
         if(!event) return;
         var state = Models.Subscriptions.check(event.url);
@@ -27,12 +29,18 @@ var Background = {
         }
     },
 
+    /* Насильственная проверка авторизации с передачей данных в Popup */
     'checkAuth': function(){
-        new Core.Job('http://tesera.ru/', 'auth', new Date(0), 0, ['auth']).execute(function(){
-            kango.dispatchMessage('syncState', Models.State);
+        new Core.Job('http://tesera.ru/user/messages/', 'auth', new Date(0), 0, ['auth']).execute(function(){
+            try {
+                kango.dispatchMessage('syncState', Models.State);    
+            } catch(e) {
+                Utils.log('Popup is not opened');
+            }
         });
     },
 
+    /* Двусторонняя синхронизация данных с Popup */
     'syncState': function(data){
         if(data){
             Models.State = data;
@@ -42,6 +50,7 @@ var Background = {
         }
     },
 
+    /* Обновление внутренних интервалов */
     updateInterval: function(){
         this.updateWorld();
         if(this._interval) clearInterval(this._interval);
@@ -50,6 +59,18 @@ var Background = {
         this._cleanup_interval = setInterval(this.cleanup, 4*3600*1000);
     },
 
+    /* 10-тиминутная пауза в случае если сервис лежит в 502, чтобы не усугублять */
+    slowDown: function(){
+        if(this._interval) clearInterval(this._interval);
+        setTimeout(this.wakeUp, 10*60*1000);
+    },
+
+    /* Пробуждение от паузы */
+    wakeUp: function(){
+        this._interval = setInterval(this.update, Models.Settings.get("interval")*1000);
+    },
+
+    /* Запуск задач на проверку всех данных */
     updateWorld: function(){
         var job_types = {
                 'comments': 'http://tesera.ru/comments/', 
@@ -81,11 +102,13 @@ var Background = {
         )); */
     },
 
+    /* Событие на запуск очередной задачи */
     update: function(){
         Utils.log("Update fired.");
         Core.Pool.executeNextJob();
     },
 
+    /* Актуализировать значение бейджа */
     updateBadge: function(){
         var count = 0,
             events = Models.getItems('log:*');
@@ -96,6 +119,7 @@ var Background = {
         kango.ui.browserButton.setBadgeValue(count<100? count: '99+');
     },
 
+    /* Очистка от старых данных */
     cleanup: function(){
         var keys,
             types = ['message', 'comment', 'log', 'last:item:'],
@@ -114,6 +138,7 @@ var Background = {
         // TODO: переводить подписки в неактивные
     },
 
+    /* Подписка на url */
     subscribe: function(data){
         if(data.sbtype){
             Models.Subscriptions.change(data);
@@ -125,6 +150,7 @@ var Background = {
         this.setIcon({'url': data.url});
     },
 
+    /* Импорт данных */
     massSubscribe: function(data){
         for(var i=data.length;i--;){
             this.subscribe({

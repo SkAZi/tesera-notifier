@@ -19,7 +19,7 @@
 
         <li>
         {% if object.type == 'message' %}
-            У вас <a href="http://tesera.ru/user/messages/" data-rel="{{ object.uid }}" class="open delete">{{ object.count|pluralize("новое сообщение", "новых сообщения", "новых сообщений") }}</a> от {% for uid in object.related %}{% if not loop.first and not loop.last %}, {% endif %}{% if loop.last %} и {% endif %}{{ uid|get_item_key("from.name") }}{% endfor %}
+            У вас <a href="http://tesera.ru/user/messages/" data-rel="{{ object.uid }}" class="open delete">{{ object.count|pluralize("новое сообщение", "новых сообщения", "новых сообщений") }}</a> от {% for uid in object.related %}{% if not loop.first and not loop.last %}, {% endif %}{% if loop.last and loop.index > 1 %} и {% endif %}{{ uid|get_item_key("from.name")|default("Tesera", true) }}{% endfor %}
         {% elif object.type == 'comment' %}
             {{ object.count|pluralize("новый комментарий", "новых комментария", "новых комментариев") }} к «<a href="{{ object.target.url }}#post{{ object.related[0]|get_item_key("id") }}" data-rel="{{ object.uid }}" class="open delete">{{ object.target.title }}</a>»
         {% elif object.type == 'article' %}

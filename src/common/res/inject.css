@@ -41,3 +41,48 @@ div.commentos div.new-item::before{
     z-index: 1;
     pointer-events : none;
 } 
+
+div.commentos.style2 div.new-item::before{
+    background: #FF0;
+    opacity: .3;
+}
+
+div.commentos.style3 div.new-item::before{
+    background: #FF0;
+    opacity: .5;
+}
+
+div.commentos.style4 div.new-item::before{
+    background: #F00;
+    opacity: .1;
+}
+
+div.commentos.style5 div.new-item::before{
+    background: #F00;
+    opacity: .3;
+}
+
+div.commentos.style6 div.new-item::before{
+    background: #F00;
+    opacity: .5;
+}
+
+
+
+div.branch div.item{
+    margin-left: 0 !important;
+}
+
+div.branch{
+    margin-left: 20px !important;
+}
+
+div.branch div.branch div.branch div.branch div.branch div.branch 
+div.branch div.branch div.branch div.branch div.branch div.branch 
+div.branch div.branch div.branch div.branch div.branch div.branch {
+    margin-left: 0 !important;
+}
+
+div.commentos.fullscreen{
+    margin-right: -320px;
+}

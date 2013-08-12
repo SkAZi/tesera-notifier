@@ -27,7 +27,8 @@ $(function(){
     // TODO: Удалять Comment когда в поле зрения больше X секунд
     // TODO: Учитывать прочтение комментариев поштучно
 
-    var get_method, set_method, params, skip = true;
+    var get_method, set_method, params, skip = true,
+        commentos = $('.commentos'), right = $('.rightcol').height() + 300;
 
     kango.invokeAsync('Utils.parse_url', location.href, function(params){
         if(!params.id){
@@ -65,6 +66,36 @@ $(function(){
             kango.invokeAsync(set_method, params, last_post, new Date());
         });
     });
+
+    /* Подпишем что кому */
+    $('.commentos .item').each(function(){
+        var $this = $(this),
+            $parent = $this.parent();
+
+        if(!$parent.hasClass('branch')) return;
+
+        var $user = $this.find('.user'),
+            text = $user.html(),
+            nick = $parent.prev('.item').find('.user > a').eq(0).text(),
+            link = $parent.prev('.item').find('.user').attr('forid');
+
+        text = text.replace(/(написал )(.*)( назад)/, "ответил <a href='#post" + link + "'>" + nick + "</a> $2$3");
+        $user.html(text);
+    });
+
+
+    /* Развернём комментарии пишире */ 
+    if(commentos.length && commentos.offset().top > right){
+        commentos.addClass('fullscreen');
+        commentos = null;
+    }
+
+    if(commentos && commentos.length){
+        $(window).scroll(function(){
+            commentos[$(window).scrollTop() > right? 'addClass': 'removeClass']('fullscreen');
+        });
+    }
+
 
     /* А давайте-ка попробуем хоть немножко подлатать дыры в безопасности */
     $(['.raw_text_output [onfocus]',
