@@ -73,7 +73,7 @@ var Core = {
                                     'name': name.length? name.text(): null
                                 },
                                 'title': title.length? title.text(): "",
-                                'body': this.find('div.body > p').html()
+                                'body': this.find('div.body > p').html().replace('<a +href="', '<a class="open" href="http://tesera.ru')
                             };
 
                         Models.Messages.add(message,
@@ -94,7 +94,7 @@ var Core = {
             return Core.Parsers.common(job, text, 
                 '.commentos .item', 
                 function(last_object){
-                    id = parseInt(this.find('.user').attr('forid'));
+                    var id = parseInt(this.find('.user').attr('forid'));
                     if(id > last_object.id){
                         var name = this.find('.user a').eq(0),
                             title = this.find('b.title'),
@@ -140,7 +140,7 @@ var Core = {
         'news': function(job, text){
             return Core.Parsers.common(job, text, '#news_news .game', 
                 function(last_object){
-                    id = parseInt(this.find('h3 a').attr('href').replace('/new/', ''));
+                    var id = parseInt(this.find('h3 a').attr('href').replace('/new/', ''));
                     if(id > last_object.id){
                         Models.Events.add({
                             'day': new Date(),
@@ -161,7 +161,7 @@ var Core = {
             return Core.Parsers.common(job, text, 
                 '#articles_articles .game', 
                 function(last_object){
-                    id = parseInt(this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
+                    var id = parseInt(this.find('.game-photo img').attr('data-src').replace(/^.*\/items\/(\d+),18\/.*$/, '$1'));
                     if(id > last_object.id){
                         Models.Events.add({
                             'day': new Date(),
@@ -182,7 +182,8 @@ var Core = {
             return Core.Parsers.common(job, text, 
                 '.main .usertimes', 
                 function(last_object){
-                    id = parseInt(this.find('.game-about a').attr('href').split('/')[4] || 0);
+                    var type = this.find('.breadcrumbs span a').attr('href').split('/')[2];
+                    var id = parseInt(this.find('.game-about a').attr('href').split('/')[4] || 0);
                     if(id > last_object.id){
                         Models.Events.add({
                             'day': new Date(),

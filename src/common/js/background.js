@@ -61,8 +61,11 @@ var Background = {
 
     /* 10-тиминутная пауза в случае если сервис лежит в 502, чтобы не усугублять */
     slowDown: function(){
+        var self = this;
         if(this._interval) clearInterval(this._interval);
-        setTimeout(this.wakeUp, 10*60*1000);
+        setTimeout(function(){
+            self.wakeUp.apply(self);
+        }, 10*60*1000);
     },
 
     /* Пробуждение от паузы */

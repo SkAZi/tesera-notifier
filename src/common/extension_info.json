@@ -1,6 +1,6 @@
 {
   "name": "Tesera Notifier",
-  "version": "2.0.179", 
+  "version": "2.0.188", 
   "description": "Tesera Notifier extension by nastolkus and SkAZi",
   "creator": "nastolkus, SkAZi", 
   
@@ -29,6 +29,6 @@
     "js/inject.js"
   ],
 
-  "update_path_url": "https://potapoff.org/tesera/",
+  "update_path_url": "http://tesera.potapoff.org/tesera-notifier/",
   "--options_page": "options.html"
 }

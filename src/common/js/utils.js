@@ -40,7 +40,7 @@ var Utils = {
     /* Вычленение типа объекта из url */
     parse_url: function(url){
         var ret = {type: "", id: 0};
-        if(!url || url.indexOf('//tesera.ru/') < 0){
+        if(!url || url.indexOf('tesera.ru/') < 0){
             return ret;
         }
 
@@ -116,7 +116,7 @@ var Utils = {
 
     /* Очеловечивание даты */
     'humanize_time': function(date){
-        if(date >= Utils.strip_time()){
+        if(date >= Utils.strip_time(Date.now())){
             return 'сегодня';
         } else if(date >= Utils.strip_time(Date.now() - 24*60*60*1000)){
             return 'вчера';

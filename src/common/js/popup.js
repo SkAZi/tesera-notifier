@@ -120,11 +120,19 @@ KangoAPI.onReady(function() {
             $this.addClass('active');
 
             kango.browser.tabs.getCurrent(function(tab){
-                tab.dispatchMessage('subscribe', {
-                    'url': Utils.clean_url(tab.getUrl(), true),
-                    'title': tab.getTitle(),
-                    'sbtype': parseInt($this.attr('data-sbtype'))           
-                });
+                var url = Utils.clean_url(tab.getUrl(), true),
+                    last_post = Models.Common.get_last('comment').id,
+                    data = {
+                        'url': url,
+                        'title': tab.getTitle(),
+                        'sbtype': parseInt($this.attr('data-sbtype')),
+                        'last_post': last_post
+                    };
+
+                // Попробуем отправить напрямую в фон, если нет данных, 
+                // то через вкладку.
+                if(last_post) kango.invokeAsync('subscribe', data);
+                else tab.dispatchMessage('subscribe', data);
             });
             return false;
         },

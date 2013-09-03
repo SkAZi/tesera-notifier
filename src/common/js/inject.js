@@ -87,7 +87,6 @@ $(function(){
     /* Развернём комментарии пишире */ 
     if(commentos.length && commentos.offset().top > right){
         commentos.addClass('fullscreen');
-        commentos = null;
     }
 
     if(commentos && commentos.length){
