@@ -91,7 +91,7 @@ $(function(){
 
     if(commentos && commentos.length){
         $(window).scroll(function(){
-            commentos[$(window).scrollTop() > right? 'addClass': 'removeClass']('fullscreen');
+            commentos.closest('.leftcol')[$(window).scrollTop() > right? 'addClass': 'removeClass']('fullscreen');
         });
     }
 
