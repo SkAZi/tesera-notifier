@@ -5,7 +5,7 @@ var Utils = {
             headersChecked = false;
 
         xmlhttp.open('GET', url, true);
-        xmlhttp.setRequestHeader("If-Modified-Since", last_modified);
+        //xmlhttp.setRequestHeader("If-Modified-Since", last_modified);
         xmlhttp.onreadystatechange = function() {
             if (!headersChecked && xmlhttp.readyState == 3) {
                 var response_date = xmlhttp.getResponseHeader('Date') || 
@@ -124,6 +124,10 @@ var Utils = {
             return 'позавчера';
         }
         return Utils.format_date(date, "%D %U");
+    },
+
+    'append_url': function(url, ap){
+        return (url + ap).replace('//', '/').replace(':/', '://');
     },
 
     /* Лог данных только в DEBUG-режиме и всё на одной странице */

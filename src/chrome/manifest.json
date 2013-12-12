@@ -33,6 +33,7 @@
     },
     "permissions": [
         "http://tesera.ru/*",
+        "http://www.tesera.ru/*",
         "tabs",
         "contextMenus",
         "webNavigation",

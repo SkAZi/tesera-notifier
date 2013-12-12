@@ -103,6 +103,7 @@ var Core = {
 
                         if(!subscription.id) return; 
                         if(name.length && name.text() == Models.State.user) return;
+                        if(name.length && Models.Settings.get('blacklist').indexOf(name.text()) > -1) return;
 
                         comment = {
                             'id': id,

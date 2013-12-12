@@ -87,6 +87,7 @@ KangoAPI.onReady(function() {
             $('#settings-tab').html(
                 nunjucks.env.render('settings.html', { 
                     settings: Models.Settings.all(),
+                    blacklist: Models.Settings.get('blacklist').join(" "),
                     options: Models.Settings.options,
                     hour: Math.round(traffic, 2),
                     day: Math.ceil(traffic*24)
@@ -98,6 +99,8 @@ KangoAPI.onReady(function() {
         'save_settings': function(){
             if($(this).attr('name') == 'debug'){
                 Models.Settings.set('debug', $(this).is(":checked"));
+            } else if($(this).attr('name') == 'blacklist'){
+                Models.Settings.set('blacklist', $(this).val().split(" "));
             } else {
                 Models.Settings.set($(this).attr('name'), parseInt($(this).val()));
             }
@@ -170,7 +173,6 @@ KangoAPI.onReady(function() {
             }, Views.check_auth);
             return false;
         },
-
 
         'show_login': function(){
             if(Models.State.authorized){
@@ -258,6 +260,8 @@ KangoAPI.onReady(function() {
 
     $('#tabs-content').on('change', ['form[action="#save-settings"] input',
                                      'form[action="#save-settings"] select'].join(','), 
+                                     Views.save_settings);
+    $('#tabs-content').on('blur', 'form[action="#save-settings"] textarea', 
                                      Views.save_settings);
 
     $('#login-form').on('submit', Views.login);

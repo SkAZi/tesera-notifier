@@ -341,7 +341,8 @@ var Models = {
             "news_interval": 60,
             "max_pages": 3,
             "cleanup": 100,
-            "debug": true
+            "debug": true,
+            "blacklist": []
         },
 
         options: {

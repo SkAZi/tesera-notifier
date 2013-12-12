@@ -58,7 +58,7 @@ output += "</a></h4>";
 }
 output += "\n                <p class=\"content\"><a href=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_3),"target", env.autoesc)),"url", env.autoesc), env.autoesc);
-output += "/comments#post";
+output += "comments#post";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"id", env.autoesc), env.autoesc);
 output += "\" class=\"open unseen\">";
 output += runtime.suppressValue(runtime.memberLookup((t_3),"body", env.autoesc), env.autoesc);
@@ -622,7 +622,9 @@ output += "не удалять";
 output += "</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Системные настройки (оставь как есть)</div>\n\n    <div class=\"row\">\n        <span>Интервал обработчика:</span> <select name=\"interval\">\n            ";
+output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Чёрный список</div>\n    <div class=\"row\">\n        <span style=\"width: 90%\">Не интересует мнение этих людей (через пробел):</span>\n        <textarea name=\"blacklist\">";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "blacklist"), env.autoesc);
+output += "</textarea>\n    </div>\n\n    <div class=\"header\">Системные настройки (оставь как есть)</div>\n\n    <div class=\"row\">\n        <span>Интервал обработчика:</span> <select name=\"interval\">\n            ";
 frame = frame.push();
 var t_23 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"interval", env.autoesc);
 if(t_23 !== undefined) {for(var t_22=0; t_22 < t_23.length; t_22++) {

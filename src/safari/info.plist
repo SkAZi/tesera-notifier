@@ -65,6 +65,7 @@
         <key>Whitelist</key>
         <array>
             <string>http://tesera.ru/*</string>
+            <string>http://www.tesera.ru/*</string>
         </array>
     </dict>
     <key>Description</key>
