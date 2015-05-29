@@ -1,5 +1,15 @@
 <form class="settings" action="#save-settings" method="post">
 
+    <div class="header">Настройки стиля</div>
+
+    <div class="row">
+        <span>Яркость подсветки:</span> <select name="new_item_style">
+            {% for val in options["new_item_style"] %}
+                <option value="{{ val }}" {% if settings["new_item_style"] == val %}selected="selected"{% endif %}>{{ val }}%</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <div class="header">Частота обновлений</div>
 
     <div class="row">

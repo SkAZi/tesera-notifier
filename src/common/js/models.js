@@ -342,7 +342,8 @@ var Models = {
             "max_pages": 3,
             "cleanup": 100,
             "debug": true,
-            "blacklist": []
+            "blacklist": [],
+            "new_item_style": 30
         },
 
         options: {
@@ -353,7 +354,8 @@ var Models = {
             "articles_interval": [5, 10, 15, 20, 30, 60, 120, 240, null],
             "news_interval": [5, 10, 15, 20, 30, 60, 120, 240, null],
             "max_pages": [1, 3, 5, 10, 0],
-            "cleanup": [10, 50, 100, 300, 500, null]
+            "cleanup": [10, 50, 100, 300, 500, null],
+            "new_item_style": [0, 10, 30, 50]
         },
 
         all: function(){

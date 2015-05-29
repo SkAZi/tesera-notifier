@@ -160,7 +160,7 @@ var Background = {
                 'url': data[i].url,
                 'title': data[i].topic || data[i].title,
                 'sbtype': data[i].sbtype || 2,
-                'last_comment': data[i].lastnum || data[i].last_post
+                'last_post': data[i].lastnum || data[i].last_post
             });
         }
         return true;

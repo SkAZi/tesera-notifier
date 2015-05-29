@@ -31,42 +31,28 @@ div.commentos div.new-item::before{
     content: "";
     display: block;
     position: absolute;
-    background: #FF0;
-    opacity: .1;
+    background: #F80;
     border-radius: 10px;
     left: -5px;
     right: -5px;
     top: -5px;
     bottom: -5px;
-    z-index: 1;
+    z-index: -1;
     pointer-events : none;
+    opacity: .3;
 } 
 
-div.commentos.style2 div.new-item::before{
-    background: #FF0;
-    opacity: .3;
+div.commentos div.new-item.style-0::before{
+    opacity: 0;
 }
 
-div.commentos.style3 div.new-item::before{
-    background: #FF0;
-    opacity: .5;
-}
-
-div.commentos.style4 div.new-item::before{
-    background: #F00;
+div.commentos div.new-item.style-10::before{
     opacity: .1;
 }
 
-div.commentos.style5 div.new-item::before{
-    background: #F00;
-    opacity: .3;
-}
-
-div.commentos.style6 div.new-item::before{
-    background: #F00;
+div.commentos div.new-item.style-50::before{
     opacity: .5;
 }
-
 
 
 div.branch div.item{

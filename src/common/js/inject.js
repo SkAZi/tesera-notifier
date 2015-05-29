@@ -32,81 +32,90 @@ $(function(){
         'Марсиане прилетели за циркачами', 'Поезда прибыли в Эссен', 'Мы строили, строили'
     ];
 
-    var get_method, set_method, params, skip = true,
-        commentos = $('.commentos'), right = $('.rightcol').height() + 300;
 
-    kango.invokeAsync('Utils.parse_url', location.href, function(params){
-        if(!params.id){
-            if(location.pathname == '/user/messages/'){
-                get_method = 'Models.Common.get_last';
-                set_method = 'Models.Common.set_last';
-                params = 'messages';
+    function cleanup(){
+        var get_method, set_method, params, skip = true,
+            commentos = $('.commentos'), right = $('.rightcol').height() + 300;
+
+        kango.invokeAsync('Utils.parse_url', location.href, function(params){
+            if(!params.id){
+                if(location.pathname == '/user/messages/'){
+                    get_method = 'Models.Common.get_last';
+                    set_method = 'Models.Common.set_last';
+                    params = 'messages';
+                    skip = false;
+                }
+            } else {
+                get_method = 'Models.Subscriptions.get_last';
+                set_method = 'Models.Subscriptions.set_last';            
                 skip = false;
             }
-        } else {
-            get_method = 'Models.Subscriptions.get_last';
-            set_method = 'Models.Subscriptions.set_last';            
-            skip = false;
-        }
 
-        if(skip) return;
+            if(skip) return;
 
-        kango.invokeAsync(get_method, params, function(last){
-            if(last.id === null) return;
+            kango.invokeAsync(get_method, params, function(last){
+                if(last.id === null) return;
 
-            var last_post = last.id;
-            $('.item .user').each(function(){
-                var $this = $(this), 
-                    post_id = parseInt($this.attr("forid"));
+                var last_post = last.id;
+                $('.item .user').each(function(){
+                    var $this = $(this), 
+                        post_id = parseInt($this.attr("forid"));
 
-                if(post_id > last.id){
-                    $this.closest('.item').addClass('new-item');
+                    if(post_id > last.id){
+                        $this.closest('.item').addClass('new-item');
+                    }
+
+                    if(post_id > last_post){
+                        last_post = post_id;
+                    }
+                });
+
+                kango.invokeAsync(set_method, params, last_post, new Date());
+            });
+        });
+
+        kango.invokeAsync('Models.Settings.all', function(settings){
+            /* Подпишем что кому */
+            $('.commentos .item').each(function(){
+                var $this = $(this),
+                    nick = $this.find('.user > a').eq(0).text(),
+                    $parent = $this.parent(),
+                    $user = $this.find('.user'),
+                    text = $user.html(),
+                    to_nick = $parent.prev('.item').find('.user > a').eq(0).text(),
+                    link = $parent.prev('.item').find('.user').attr('forid');
+
+                if(settings.blacklist.indexOf(nick) > -1){
+                    $('<p style="margin: 1em 0 2em -.7em;" ondblclick="$(this).hide().next(\'div\').show()"><i><a style="color: #000; cursor: pointer;">'+ 
+                        smth[((Math.random()*smth.length)|0)] +' и оставили это здесь.</a></i></p>').insertBefore($this);
+                    $this.hide();
                 }
-
-                if(post_id > last_post){
-                    last_post = post_id;
+                if($parent.hasClass('branch')){
+                    text = text.replace(/(написал )(.*)( назад)/, "ответил <a href='#post" + link + "'>" + to_nick + "</a> $2$3");
+                    $user.html(text);                
                 }
             });
 
-            kango.invokeAsync(set_method, params, last_post, new Date());
-        });
-    });
+            /* Покрасим */
+            $('.commentos .item').addClass('style-'+settings.new_item_style);
 
-    kango.invokeAsync('Models.Settings.all', function(settings){
-        /* Подпишем что кому */
-        $('.commentos .item').each(function(){
-            var $this = $(this),
-                nick = $this.find('.user > a').eq(0).text(),
-                $parent = $this.parent(),
-                $user = $this.find('.user'),
-                text = $user.html(),
-                to_nick = $parent.prev('.item').find('.user > a').eq(0).text(),
-                link = $parent.prev('.item').find('.user').attr('forid');
 
-            if(settings.blacklist.indexOf(nick) > -1){
-                $('<p style="margin: 1em 0 2em -.7em;" ondblclick="$(this).hide().next(\'div\').show()"><i><a style="color: #000; cursor: pointer;">'+ 
-                    smth[((Math.random()*smth.length)|0)] +' и оставили это здесь.</a></i></p>').insertBefore($this);
-                $this.hide();
+            /* Развернём комментарии пишире */ 
+            if(commentos.length && commentos.offset().top > right){
+                commentos.addClass('fullscreen');
             }
-            if($parent.hasClass('branch')){
-                text = text.replace(/(написал )(.*)( назад)/, "ответил <a href='#post" + link + "'>" + to_nick + "</a> $2$3");
-                $user.html(text);                
+
+            if(commentos && commentos.length){
+                $(window).unbind('scroll').scroll(function(){
+                    commentos.closest('.leftcol')[$(window).scrollTop() > right? 'addClass': 'removeClass']('fullscreen');
+                });
             }
+
         });
+    }
 
+    cleanup();
 
-        /* Развернём комментарии пишире */ 
-        if(commentos.length && commentos.offset().top > right){
-            commentos.addClass('fullscreen');
-        }
-
-        if(commentos && commentos.length){
-            $(window).scroll(function(){
-                commentos.closest('.leftcol')[$(window).scrollTop() > right? 'addClass': 'removeClass']('fullscreen');
-            });
-        }
-
-    });
 
     /* А давайте-ка попробуем хоть немножко подлатать дыры в безопасности */
     $(['.raw_text_output [onfocus]',

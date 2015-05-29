@@ -458,39 +458,33 @@ var lineno = null;
 var colno = null;
 var output = "";
 try {
-output += "<form class=\"settings\" action=\"#save-settings\" method=\"post\">\n\n    <div class=\"header\">Частота обновлений</div>\n\n    <div class=\"row\">\n        <span>Проверять сообщения каждые:</span> <select name=\"messages_interval\">\n            ";
+output += "<form class=\"settings\" action=\"#save-settings\" method=\"post\">\n\n    <div class=\"header\">Настройки стиля</div>\n\n    <div class=\"row\">\n        <span>Яркость подсветки:</span> <select name=\"new_item_style\">\n            ";
 frame = frame.push();
-var t_2 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"messages_interval", env.autoesc);
+var t_2 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"new_item_style", env.autoesc);
 if(t_2 !== undefined) {for(var t_1=0; t_1 < t_2.length; t_1++) {
 var t_3 = t_2[t_1];
 frame.set("val", t_3);
 output += "\n                <option value=\"";
 output += runtime.suppressValue(t_3, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"messages_interval", env.autoesc) == t_3) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"new_item_style", env.autoesc) == t_3) {
 output += "selected=\"selected\"";
 }
 output += ">";
-if(t_3) {
 output += runtime.suppressValue(t_3, env.autoesc);
-output += " минут";
-}
-else {
-output += "не проверять";
-}
-output += "</option>\n            ";
+output += "%</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять комментарии каждые:</span> <select name=\"comments_interval\">\n            ";
+output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Частота обновлений</div>\n\n    <div class=\"row\">\n        <span>Проверять сообщения каждые:</span> <select name=\"messages_interval\">\n            ";
 frame = frame.push();
-var t_5 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"comments_interval", env.autoesc);
+var t_5 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"messages_interval", env.autoesc);
 if(t_5 !== undefined) {for(var t_4=0; t_4 < t_5.length; t_4++) {
 var t_6 = t_5[t_4];
 frame.set("val", t_6);
 output += "\n                <option value=\"";
 output += runtime.suppressValue(t_6, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"comments_interval", env.autoesc) == t_6) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"messages_interval", env.autoesc) == t_6) {
 output += "selected=\"selected\"";
 }
 output += ">";
@@ -504,16 +498,16 @@ output += "не проверять";
 output += "</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять дневники каждые:</span> <select name=\"diaries_interval\">\n            ";
+output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять комментарии каждые:</span> <select name=\"comments_interval\">\n            ";
 frame = frame.push();
-var t_8 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"diaries_interval", env.autoesc);
+var t_8 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"comments_interval", env.autoesc);
 if(t_8 !== undefined) {for(var t_7=0; t_7 < t_8.length; t_7++) {
 var t_9 = t_8[t_7];
 frame.set("val", t_9);
 output += "\n                <option value=\"";
 output += runtime.suppressValue(t_9, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"diaries_interval", env.autoesc) == t_9) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"comments_interval", env.autoesc) == t_9) {
 output += "selected=\"selected\"";
 }
 output += ">";
@@ -527,16 +521,16 @@ output += "не проверять";
 output += "</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять статьи каждые:</span> <select name=\"articles_interval\">\n            ";
+output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять дневники каждые:</span> <select name=\"diaries_interval\">\n            ";
 frame = frame.push();
-var t_11 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"articles_interval", env.autoesc);
+var t_11 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"diaries_interval", env.autoesc);
 if(t_11 !== undefined) {for(var t_10=0; t_10 < t_11.length; t_10++) {
 var t_12 = t_11[t_10];
 frame.set("val", t_12);
 output += "\n                <option value=\"";
 output += runtime.suppressValue(t_12, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"articles_interval", env.autoesc) == t_12) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"diaries_interval", env.autoesc) == t_12) {
 output += "selected=\"selected\"";
 }
 output += ">";
@@ -550,21 +544,44 @@ output += "не проверять";
 output += "</option>\n            ";
 }
 }frame = frame.pop();
-output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять новости каждые:</span> <select name=\"news_interval\">\n            ";
+output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять статьи каждые:</span> <select name=\"articles_interval\">\n            ";
 frame = frame.push();
-var t_14 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"news_interval", env.autoesc);
+var t_14 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"articles_interval", env.autoesc);
 if(t_14 !== undefined) {for(var t_13=0; t_13 < t_14.length; t_13++) {
 var t_15 = t_14[t_13];
 frame.set("val", t_15);
 output += "\n                <option value=\"";
 output += runtime.suppressValue(t_15, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"news_interval", env.autoesc) == t_15) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"articles_interval", env.autoesc) == t_15) {
 output += "selected=\"selected\"";
 }
 output += ">";
 if(t_15) {
 output += runtime.suppressValue(t_15, env.autoesc);
+output += " минут";
+}
+else {
+output += "не проверять";
+}
+output += "</option>\n            ";
+}
+}frame = frame.pop();
+output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Проверять новости каждые:</span> <select name=\"news_interval\">\n            ";
+frame = frame.push();
+var t_17 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"news_interval", env.autoesc);
+if(t_17 !== undefined) {for(var t_16=0; t_16 < t_17.length; t_16++) {
+var t_18 = t_17[t_16];
+frame.set("val", t_18);
+output += "\n                <option value=\"";
+output += runtime.suppressValue(t_18, env.autoesc);
+output += "\" ";
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"news_interval", env.autoesc) == t_18) {
+output += "selected=\"selected\"";
+}
+output += ">";
+if(t_18) {
+output += runtime.suppressValue(t_18, env.autoesc);
 output += " минут";
 }
 else {
@@ -579,19 +596,19 @@ output += " Мб</dd>\n            <dt class=\"day\">в день:</dt>\n        
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "day"), env.autoesc);
 output += " Мб</dd>\n        </dl>\n    </div>\n\n    <div class=\"header\">Настройки истории</div>\n\n    <div class=\"row\">\n        <span>Искать старые записи:</span> <select name=\"max_pages\">\n            ";
 frame = frame.push();
-var t_17 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"max_pages", env.autoesc);
-if(t_17 !== undefined) {for(var t_16=0; t_16 < t_17.length; t_16++) {
-var t_18 = t_17[t_16];
-frame.set("val", t_18);
+var t_20 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"max_pages", env.autoesc);
+if(t_20 !== undefined) {for(var t_19=0; t_19 < t_20.length; t_19++) {
+var t_21 = t_20[t_19];
+frame.set("val", t_21);
 output += "\n                <option value=\"";
-output += runtime.suppressValue(t_18, env.autoesc);
+output += runtime.suppressValue(t_21, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"max_pages", env.autoesc) == t_18) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"max_pages", env.autoesc) == t_21) {
 output += "selected=\"selected\"";
 }
 output += ">";
-if(t_18) {
-output += runtime.suppressValue(env.getFilter("pluralize")(t_18,"страницу","страницы","страниц"), env.autoesc);
+if(t_21) {
+output += runtime.suppressValue(env.getFilter("pluralize")(t_21,"страницу","страницы","страниц"), env.autoesc);
 }
 else {
 output += "игнорировать";
@@ -601,19 +618,19 @@ output += "</option>\n            ";
 }frame = frame.pop();
 output += "\n        </select>\n    </div>\n\n    <div class=\"row\">\n        <span>Хранить не более:</span> <select name=\"cleanup\">\n            ";
 frame = frame.push();
-var t_20 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"cleanup", env.autoesc);
-if(t_20 !== undefined) {for(var t_19=0; t_19 < t_20.length; t_19++) {
-var t_21 = t_20[t_19];
-frame.set("val", t_21);
+var t_23 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"cleanup", env.autoesc);
+if(t_23 !== undefined) {for(var t_22=0; t_22 < t_23.length; t_22++) {
+var t_24 = t_23[t_22];
+frame.set("val", t_24);
 output += "\n                <option value=\"";
-output += runtime.suppressValue(t_21, env.autoesc);
+output += runtime.suppressValue(t_24, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"cleanup", env.autoesc) == t_21) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"cleanup", env.autoesc) == t_24) {
 output += "selected=\"selected\"";
 }
 output += ">";
-if(t_21) {
-output += runtime.suppressValue(t_21, env.autoesc);
+if(t_24) {
+output += runtime.suppressValue(t_24, env.autoesc);
 output += " записей";
 }
 else {
@@ -626,18 +643,18 @@ output += "\n        </select>\n    </div>\n\n    <div class=\"header\">Чёрн
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "blacklist"), env.autoesc);
 output += "</textarea>\n    </div>\n\n    <div class=\"header\">Системные настройки (оставь как есть)</div>\n\n    <div class=\"row\">\n        <span>Интервал обработчика:</span> <select name=\"interval\">\n            ";
 frame = frame.push();
-var t_23 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"interval", env.autoesc);
-if(t_23 !== undefined) {for(var t_22=0; t_22 < t_23.length; t_22++) {
-var t_24 = t_23[t_22];
-frame.set("val", t_24);
+var t_26 = runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "options")),"interval", env.autoesc);
+if(t_26 !== undefined) {for(var t_25=0; t_25 < t_26.length; t_25++) {
+var t_27 = t_26[t_25];
+frame.set("val", t_27);
 output += "\n                <option value=\"";
-output += runtime.suppressValue(t_24, env.autoesc);
+output += runtime.suppressValue(t_27, env.autoesc);
 output += "\" ";
-if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"interval", env.autoesc) == t_24) {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "settings")),"interval", env.autoesc) == t_27) {
 output += "selected=\"selected\"";
 }
 output += ">";
-output += runtime.suppressValue(t_24, env.autoesc);
+output += runtime.suppressValue(t_27, env.autoesc);
 output += " сек.</option>\n            ";
 }
 }frame = frame.pop();

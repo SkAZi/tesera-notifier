@@ -1,6 +1,6 @@
 {
   "name": "Tesera Notifier",
-  "version": "2.0.201", 
+  "version": "2.0.217", 
   "description": "Tesera Notifier extension by nastolkus and SkAZi",
   "creator": "nastolkus, SkAZi", 
   
@@ -19,7 +19,7 @@
 
   "permissions": {
     "content_scripts": ["http://tesera.ru/*", "http://www.tesera.ru/*"],
-    "--xhr": ["http://tesera.ru/*", "http://www.tesera.ru/*"],
+    "xhr": ["http://tesera.ru/*", "http://www.tesera.ru/*"],
     "tabs": true,
     "context_menu": true,
     "web_navigation": true,
@@ -39,6 +39,5 @@
     "js/inject.js"
   ],
 
-  "update_path_url": "https://tesera.potapoff.org/tesera-notifier/",
   "--options_page": "options.html"
 }
